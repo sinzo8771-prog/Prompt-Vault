@@ -1,65 +1,230 @@
-import Image from "next/image";
+import { getAllPrompts, getFeaturedPrompts, getTrendingPrompts, getCategories } from "@/lib/prompts";
+import { PromptCard } from "@/components/PromptCard";
+import { CategoryCard } from "@/components/CategoryCard";
+import { HeroSearch } from "@/components/HeroSearch";
+import { ScrollReveal } from "@/components/ScrollReveal";
+import { Marquee } from "@/components/Marquee";
+import { MagneticButton } from "@/components/MagneticButton";
+import { TextScramble } from "@/components/TextScramble";
 
-export default function Home() {
+export const revalidate = 60; // ISR: revalidate every 60 seconds
+
+export default async function HomePage() {
+  const [featured, trending, categories, allPrompts] = await Promise.all([
+    getFeaturedPrompts(6),
+    getTrendingPrompts(10),
+    getCategories(),
+    getAllPrompts(),
+  ]);
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <>
+      {/* ===== HERO ===== */}
+      <section className="relative min-h-screen flex items-center pt-20">
+        <div className="absolute inset-0 opacity-[0.03]" style={{
+          backgroundImage: "linear-gradient(var(--color-text) 1px, transparent 1px), linear-gradient(90deg, var(--color-text) 1px, transparent 1px)",
+          backgroundSize: "60px 60px",
+        }} />
+
+        <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-8 w-full py-20">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            <div className="lg:col-span-7">
+              <ScrollReveal>
+                <div className="label-tag mb-6">
+                  <span className="dot" />
+                  {allPrompts.length}+ curated prompts
+                </div>
+              </ScrollReveal>
+
+              <ScrollReveal delay={100}>
+                <h1 className="text-display mb-6">
+                  <TextScramble text="Stop" className="text-text" />{" "}
+                  <span className="text-accent">Googling</span>{" "}
+                  <br className="hidden sm:block" />
+                  <TextScramble text="prompts." className="text-text" delay={300} />
+                </h1>
+              </ScrollReveal>
+
+              <ScrollReveal delay={200}>
+                <p className="text-body text-lg max-w-lg mb-8">
+                  A curated library of AI prompts that actually work. No fluff,
+                  no listicles, no LinkedIn broetry. Just battle-tested prompts
+                  for ChatGPT, Midjourney, Claude, and more.
+                </p>
+              </ScrollReveal>
+
+              <ScrollReveal delay={300}>
+                <HeroSearch />
+              </ScrollReveal>
+
+              <ScrollReveal delay={400}>
+                <div className="flex flex-wrap gap-3 mt-6">
+                  {["Blog Writer", "Code Review", "Midjourney", "Cold Email", "Resume"].map(
+                    (term) => (
+                      <a
+                        key={term}
+                        href={"/search?q=" + encodeURIComponent(term)}
+                        className="text-xs font-mono text-text-muted px-3 py-1.5 border border-border hover:border-accent/50 hover:text-accent transition-all"
+                      >
+                        {term}
+                      </a>
+                    )
+                  )}
+                </div>
+              </ScrollReveal>
+            </div>
+
+            <div className="lg:col-span-5">
+              <ScrollReveal delay={200}>
+                <div className="grid grid-cols-2 gap-px bg-border">
+                  {[
+                    { value: allPrompts.length + "+", label: "Prompts" },
+                    { value: categories.length + "", label: "Categories" },
+                    { value: "6+", label: "AI Tools" },
+                    { value: "Free", label: "To Browse" },
+                  ].map((stat) => (
+                    <div key={stat.label} className="bg-bg p-6 text-center">
+                      <p className="stat-number mb-1">{stat.value}</p>
+                      <p className="text-[10px] font-mono uppercase tracking-[0.15em] text-text-muted">
+                        {stat.label}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </ScrollReveal>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ===== MARQUEE ===== */}
+      <div className="border-y border-border bg-bg-card">
+        <Marquee
+          items={[
+            "ChatGPT Prompts", "Midjourney Art", "Code Review", "Marketing Copy",
+            "Resume Builder", "Study Notes", "Email Sequences", "SEO Content",
+            "Debug Assistant", "Blog Writer",
+          ]}
+          className="py-4"
+          speed={40}
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
+      </div>
+
+      {/* ===== CATEGORIES ===== */}
+      <section className="max-w-7xl mx-auto px-6 lg:px-8 py-24">
+        <ScrollReveal>
+          <div className="flex items-end justify-between mb-10">
+            <div>
+              <p className="text-label mb-2">01 / Categories</p>
+              <h2 className="text-heading">
+                Browse by <span className="text-accent">use case</span>
+              </h2>
+            </div>
             <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+              href="/category/writing"
+              className="text-sm text-text-secondary hover:text-accent transition-colors link-underline hidden sm:block"
             >
-              Templates
-            </a>{" "}
-            or the{" "}
+              View all &rarr;
+            </a>
+          </div>
+        </ScrollReveal>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-border">
+          {categories.map((cat, i) => (
+            <ScrollReveal key={cat.slug} delay={i * 80}>
+              <div className="bg-bg">
+                <CategoryCard category={cat} index={i} />
+              </div>
+            </ScrollReveal>
+          ))}
+        </div>
+      </section>
+
+      {/* ===== FEATURED ===== */}
+      <section className="max-w-7xl mx-auto px-6 lg:px-8 py-24">
+        <ScrollReveal>
+          <div className="flex items-end justify-between mb-10">
+            <div>
+              <p className="text-label mb-2">02 / Featured</p>
+              <h2 className="text-heading">
+                Hand-picked <span className="text-accent">prompts</span>
+              </h2>
+            </div>
             <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+              href="/search?q="
+              className="text-sm text-text-secondary hover:text-accent transition-colors link-underline hidden sm:block"
             >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+              Browse all &rarr;
+            </a>
+          </div>
+        </ScrollReveal>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-border">
+          {featured.map((prompt, i) => (
+            <ScrollReveal key={prompt.id} delay={i * 60}>
+              <div className="bg-bg">
+                <PromptCard prompt={prompt} index={i} />
+              </div>
+            </ScrollReveal>
+          ))}
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </section>
+
+      {/* ===== TRENDING ===== */}
+      <section className="max-w-7xl mx-auto px-6 lg:px-8 py-24">
+        <ScrollReveal>
+          <div className="flex items-end justify-between mb-10">
+            <div>
+              <p className="text-label mb-2">03 / Trending</p>
+              <h2 className="text-heading">
+                Most <span className="text-accent">copied</span> this week
+              </h2>
+            </div>
+          </div>
+        </ScrollReveal>
+
+        <div className="space-y-px">
+          {trending.map((prompt, i) => (
+            <ScrollReveal key={prompt.id} delay={i * 60}>
+              <div className="flex items-center gap-6">
+                <div className="hidden sm:flex w-12 h-12 bg-bg-card border border-border items-center justify-center shrink-0">
+                  <span className="text-lg font-bold font-mono text-text-muted">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                </div>
+                <div className="flex-1">
+                  <PromptCard prompt={prompt} compact index={i} />
+                </div>
+              </div>
+            </ScrollReveal>
+          ))}
         </div>
-      </main>
-    </div>
+      </section>
+
+      {/* ===== CTA ===== */}
+      <section className="border-y border-border">
+        <div className="max-w-4xl mx-auto px-6 lg:px-8 py-24 text-center">
+          <ScrollReveal>
+            <p className="text-label mb-4">Ready?</p>
+            <h2 className="text-display mb-6">
+              Stop prompting.<br />
+              <span className="text-accent">Start shipping.</span>
+            </h2>
+            <p className="text-body max-w-lg mx-auto mb-8">
+              Join thousands of developers, marketers, and creators who use
+              PromptVault to get better results from AI tools.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <MagneticButton href="/category/writing">
+                Browse Prompts
+              </MagneticButton>
+              <MagneticButton href="/signup" className="!bg-transparent !text-text !border !border-border hover:!border-accent hover:!text-accent">
+                Sign Up Free
+              </MagneticButton>
+            </div>
+          </ScrollReveal>
+        </div>
+      </section>
+    </>
   );
 }

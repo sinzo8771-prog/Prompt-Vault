@@ -1,0 +1,32 @@
+{
+  "workspace_page_id": "36fbb4b2-0507-811d-9cc9-fca53cd8f941",
+  "database_id": "21033451-753f-4aed-b928-c67eeb59318d",
+  "data_source_id": "dedc1d5a-fb12-4d3c-b625-e34c377fc783",
+  "database_url": "https://www.notion.so/21033451753f4aedb928c67eeb59318d",
+  "notion_api_key_file": "C:\\Users\\AkashPC\\tmp\\.ntoken",
+  "fields": {
+    "Name": "title",
+    "Body": "rich_text",
+    "AI Tool": "select",
+    "Category": "select",
+    "Tags": "multi_select",
+    "Slug": "rich_text",
+    "CopyCount": "number"
+  },
+  "ai_tool_options": [
+    "ChatGPT",
+    "Midjourney",
+    "Claude",
+    "Gemini",
+    "Coding",
+    "Other"
+  ],
+  "category_options": [
+    "Writing",
+    "Design",
+    "Marketing",
+    "Development",
+    "Productivity",
+    "Creative"
+  ]
+}
