@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Geist_Mono } from "next/font/google";
+import { ClerkProvider } from "@clerk/nextjs";
 import { Toaster } from "react-hot-toast";
 import "./globals.css";
 import { Header } from "@/components/Header";
@@ -39,29 +40,31 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      className={`${inter.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col bg-bg text-text">
-        <CustomCursor />
-        <GrainOverlay />
-        <Header />
-        <main className="flex-1">{children}</main>
-        <Footer />
-        <Toaster
-          position="bottom-right"
-          toastOptions={{
-            style: {
-              background: "#1a1a1a",
-              color: "#e8e8e8",
-              border: "1px solid #2a2a2a",
-              fontFamily: "monospace",
-              fontSize: "13px",
-            },
-          }}
-        />
-      </body>
-    </html>
+    <ClerkProvider>
+      <html
+        lang="en"
+        className={`${inter.variable} ${geistMono.variable} h-full antialiased`}
+      >
+        <body className="min-h-full flex flex-col bg-bg text-text">
+          <CustomCursor />
+          <GrainOverlay />
+          <Header />
+          <main className="flex-1">{children}</main>
+          <Footer />
+          <Toaster
+            position="bottom-right"
+            toastOptions={{
+              style: {
+                background: "#1a1a1a",
+                color: "#e8e8e8",
+                border: "1px solid #2a2a2a",
+                fontFamily: "monospace",
+                fontSize: "13px",
+              },
+            }}
+          />
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }

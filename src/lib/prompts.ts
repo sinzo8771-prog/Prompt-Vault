@@ -68,7 +68,7 @@ function toPrompt(rec: any): Prompt {
     title,
     body: extractRichText(rec, "Body"),
     aiTool: extractSelect(rec, "AI Tool"),
-    category: extractSelect(rec, "Category").toLowerCase().replace(/\s+/g, "-"),
+    category: extractSelect(rec, "Category").toLowerCase().replace(/[&]/g, "and").replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, ""),
     tags: extractMultiSelect(rec, "Tags"),
     copyCount: extractNumber(rec, "CopyCount"),
     upvotes: 0,
@@ -127,15 +127,21 @@ export async function getPromptsByCategory(category: string): Promise<Prompt[]> 
     );
   }
 
-  const catMap: Record<string, string> = {
+  // Map URL slug back to Notion category name
+  const slugToNotion: Record<string, string> = {
     writing: "Writing",
     design: "Design",
     marketing: "Marketing",
     development: "Development",
     productivity: "Productivity",
     creative: "Creative",
+    "sales-and-crm": "Sales & CRM",
+    "business-and-finance": "Business & Finance",
+    "education-and-learning": "Education & Learning",
+    "ai-and-automation": "AI & Automation",
+    "video-and-film": "Video & Film",
   };
-  const notionCat = catMap[category.toLowerCase()] || category;
+  const notionCat = slugToNotion[category.toLowerCase()] || category;
 
   const records = await queryDataSource(
     { property: "Category", select: { equals: notionCat } },
@@ -220,9 +226,23 @@ export async function getCategories(): Promise<Category[]> {
   return Object.entries(counts)
     .map(([slug, count]) => {
       const def = catDef[slug] || { icon: "📁", color: "#666", description: "" };
+      // Map slug back to display name
+      const displayNameMap: Record<string, string> = {
+        "writing": "Writing",
+        "design": "Design",
+        "marketing": "Marketing",
+        "development": "Development",
+        "productivity": "Productivity",
+        "creative": "Creative",
+        "sales-and-crm": "Sales & CRM",
+        "business-and-finance": "Business & Finance",
+        "education-and-learning": "Education & Learning",
+        "ai-and-automation": "AI & Automation",
+        "video-and-film": "Video & Film",
+      };
       return {
         slug,
-        name: slug.charAt(0).toUpperCase() + slug.slice(1),
+        name: displayNameMap[slug] || slug.charAt(0).toUpperCase() + slug.slice(1),
         description: def.description,
         icon: def.icon,
         promptCount: count,
