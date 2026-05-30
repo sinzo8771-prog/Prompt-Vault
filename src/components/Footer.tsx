@@ -35,12 +35,17 @@ export function Footer() {
             </h3>
             <ul className="space-y-2.5">
               {[
-                { name: "ChatGPT", href: "/category/chatgpt" },
-                { name: "Midjourney", href: "/category/midjourney" },
-                { name: "Coding", href: "/category/coding" },
+                { name: "Writing", href: "/category/writing" },
+                { name: "Development", href: "/category/development" },
                 { name: "Marketing", href: "/category/marketing" },
-                { name: "Resume", href: "/category/resume" },
-                { name: "Studying", href: "/category/studying" },
+                { name: "Design", href: "/category/design" },
+                { name: "AI & Automation", href: "/category/ai-and-automation" },
+                { name: "Video & Film", href: "/category/video-and-film" },
+                { name: "Business & Finance", href: "/category/business-and-finance" },
+                { name: "Education & Learning", href: "/category/education-and-learning" },
+                { name: "Sales & CRM", href: "/category/sales-and-crm" },
+                { name: "Productivity", href: "/category/productivity" },
+                { name: "Creative", href: "/category/creative" },
               ].map((link) => (
                 <li key={link.name}>
                   <Link

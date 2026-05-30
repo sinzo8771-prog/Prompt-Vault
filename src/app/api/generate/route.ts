@@ -111,12 +111,15 @@ const TONE_MAP: Record<string, string> = {
 const CATEGORIES_CONTEXT: Record<string, string> = {
   Writing: "Blog posts, articles, essays, stories, scripts, documentation, creative writing.",
   Marketing: "Ad copy, email campaigns, social media, SEO content, brand messaging, landing pages.",
-  Coding: "Code review, debugging, documentation, architecture, boilerplates, algorithms.",
-  Resume: "Resume bullet points, cover letters, LinkedIn profiles, interview prep, career summaries.",
-  Studying: "Note-taking, flashcards, concept explanations, study plans, practice problems.",
-  Creative: "Art prompts, brainstorming, naming, taglines, creative writing, ideation.",
-  Business: "Strategy, analysis, proposals, reports, meeting agendas, executive summaries.",
-  "Social Media": "Posts, threads, captions, engagement hooks, content calendars, community building.",
+  Development: "Code review, debugging, documentation, architecture, boilerplates, system design, DevOps, CI/CD.",
+  Design: "Image generation prompts, UI/UX design, logos, branding, product mockups, glassmorphism, design systems.",
+  Productivity: "Automation, organization, time management, meeting agendas, SOPs, workflow optimization, deep work.",
+  Creative: "Art prompts, brainstorming, naming, taglines, creative writing, ideation, storytelling.",
+  "AI & Automation": "AI agent design, RAG systems, prompt engineering, n8n/Make/Zapier workflows, fine-tuning, multi-agent systems.",
+  "Video & Film": "AI video generation (Sora, Kling, Runway), YouTube production, short-form content, storyboards, motion graphics.",
+  "Business & Finance": "Business plans, financial models, investor pitches, market research, competitive analysis, startup strategy.",
+  "Education & Learning": "Course creation, curriculum design, lesson plans, flashcards, study systems, tutoring prompts.",
+  "Sales & CRM": "Discovery calls, outreach sequences, deal strategy, churn prevention, proposal writing, LinkedIn selling.",
 };
 
 // Verified working free models

@@ -25,12 +25,15 @@ const TOOLS = [
 const CATEGORIES = [
   "Writing",
   "Marketing",
-  "Coding",
-  "Resume",
-  "Studying",
+  "Development",
+  "Design",
+  "Productivity",
   "Creative",
-  "Business",
-  "Social Media",
+  "AI & Automation",
+  "Video & Film",
+  "Business & Finance",
+  "Education & Learning",
+  "Sales & CRM",
 ];
 
 const TONES = [

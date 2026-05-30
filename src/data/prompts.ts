@@ -32,12 +32,17 @@ export interface Pack {
 }
 
 export const categories: Category[] = [
-  { slug: "chatgpt", name: "ChatGPT", description: "Writing, brainstorming, summarization, and general AI assistance prompts for OpenAI's ChatGPT.", icon: "💬", promptCount: 120, color: "#10a37f" },
-  { slug: "midjourney", name: "Midjourney", description: "Image generation prompts for photorealistic art, illustrations, and creative visual designs.", icon: "🎨", promptCount: 85, color: "#5865f2" },
-  { slug: "coding", name: "Coding", description: "Code review, debugging, documentation, and development workflow prompts for programmers.", icon: "💻", promptCount: 70, color: "#f59e0b" },
-  { slug: "marketing", name: "Marketing", description: "Ad copy, email campaigns, social media content, and brand voice prompts for marketers.", icon: "📈", promptCount: 95, color: "#ef4444" },
-  { slug: "resume", name: "Resume & Career", description: "Resume writing, cover letters, LinkedIn optimization, and interview prep prompts.", icon: "📄", promptCount: 60, color: "#8b5cf6" },
-  { slug: "studying", name: "Studying", description: "Note-taking, flashcard generation, essay assistance, and concept explanation prompts.", icon: "📚", promptCount: 65, color: "#06b6d4" },
+  { slug: "writing", name: "Writing", description: "Blog posts, articles, stories, scripts, and creative writing prompts.", icon: "✍️", promptCount: 0, color: "#10a37f" },
+  { slug: "development", name: "Development", description: "Code review, debugging, DevOps, and development workflow prompts.", icon: "💻", promptCount: 0, color: "#f59e0b" },
+  { slug: "marketing", name: "Marketing", description: "Ad copy, email campaigns, SEO, and brand strategy prompts.", icon: "📈", promptCount: 0, color: "#ef4444" },
+  { slug: "design", name: "Design", description: "Image generation, UI design, branding, and creative visual prompts.", icon: "🎨", promptCount: 0, color: "#5865f2" },
+  { slug: "productivity", name: "Productivity", description: "Automation, organization, SOPs, and efficiency prompts.", icon: "⚡", promptCount: 0, color: "#8b5cf6" },
+  { slug: "creative", name: "Creative", description: "Creative ideation, storytelling, art, and artistic prompts.", icon: "💡", promptCount: 0, color: "#06b6d4" },
+  { slug: "ai-and-automation", name: "AI & Automation", description: "AI agents, RAG systems, workflow automation, and prompt engineering.", icon: "🤖", promptCount: 0, color: "#7c3aed" },
+  { slug: "video-and-film", name: "Video & Film", description: "AI video generation, YouTube production, and motion design.", icon: "🎬", promptCount: 0, color: "#dc2626" },
+  { slug: "business-and-finance", name: "Business & Finance", description: "Business plans, financial models, fundraising, and strategy.", icon: "💼", promptCount: 0, color: "#0284c7" },
+  { slug: "education-and-learning", name: "Education & Learning", description: "Course creation, curriculum design, lesson plans, and study systems.", icon: "📚", promptCount: 0, color: "#059669" },
+  { slug: "sales-and-crm", name: "Sales & CRM", description: "Sales scripts, CRM workflows, outreach, and deal strategy.", icon: "🎯", promptCount: 0, color: "#f97316" },
 ];
 
 export const packs: Pack[] = [

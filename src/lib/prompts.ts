@@ -215,6 +215,11 @@ export async function getCategories(): Promise<Category[]> {
     development: { icon: "💻", color: "#f59e0b", description: "Code review, debugging, and development workflow prompts." },
     productivity: { icon: "⚡", color: "#8b5cf6", description: "Automation, organization, and efficiency prompts." },
     creative: { icon: "💡", color: "#06b6d4", description: "Creative ideation, storytelling, and artistic prompts." },
+    "sales-and-crm": { icon: "🎯", color: "#f97316", description: "Sales scripts, CRM workflows, and deal strategy prompts." },
+    "ai-and-automation": { icon: "🤖", color: "#7c3aed", description: "AI agent design, workflow automation, and RAG prompts." },
+    "education-and-learning": { icon: "📚", color: "#059669", description: "Course creation, curriculum design, and study system prompts." },
+    "business-and-finance": { icon: "💼", color: "#0284c7", description: "Business plans, financial models, and fundraising prompts." },
+    "video-and-film": { icon: "🎬", color: "#dc2626", description: "Video generation, YouTube production, and motion design prompts." },
   };
 
   const counts: Record<string, number> = {};
