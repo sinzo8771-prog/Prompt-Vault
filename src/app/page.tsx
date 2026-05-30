@@ -80,7 +80,7 @@ export default async function HomePage() {
                   {[
                     { value: allPrompts.length + "+", label: "Prompts" },
                     { value: categories.length + "", label: "Categories" },
-                    { value: "6+", label: "AI Tools" },
+                    { value: "8+", label: "AI Tools" },
                     { value: "Free", label: "To Browse" },
                   ].map((stat) => (
                     <div key={stat.label} className="bg-bg p-6 text-center">

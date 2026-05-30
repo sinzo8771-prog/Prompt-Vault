@@ -24,8 +24,8 @@ export const metadata: Metadata = {
     template: "%s — PromptVault",
   },
   description:
-    "Curated library of battle-tested AI prompts for ChatGPT, Midjourney, Claude, and more. No noise, just results.",
-  keywords: ["AI prompts", "ChatGPT prompts", "Midjourney prompts", "prompt engineering"],
+    "Curated library of 124+ battle-tested AI prompts for ChatGPT, Claude, Gemini, Midjourney, Copilot, DeepSeek and more. 11 categories including AI Automation, Video & Film, Business, Education, and Sales.",
+  keywords: ["AI prompts", "ChatGPT prompts", "Midjourney prompts", "Claude prompts", "Gemini prompts", "DeepSeek prompts", "Copilot prompts", "prompt engineering", "AI automation prompts", "video generation prompts"],
   openGraph: {
     title: "PromptVault — AI Prompts That Actually Work",
     description: "Curated library of battle-tested AI prompts. No noise, just results.",
