@@ -67,8 +67,7 @@ export function Footer() {
               {[
                 { name: "Generator", href: "/generator" },
                 { name: "About", href: "/about" },
-                { name: "Blog", href: "#" },
-                { name: "Prompt Guide", href: "#" },
+                { name: "Prompt Guide", href: "/generator" },
               ].map((link) => (
                 <li key={link.name}>
                   <Link

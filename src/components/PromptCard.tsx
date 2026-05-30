@@ -93,10 +93,9 @@ export function PromptCard({
           ))}
         </div>
 
-        <div className="flex items-center justify-between pt-3 border-t border-border">
+        <div className="flex items-center justify-between">
           <div className="flex items-center gap-4 text-[11px] font-mono text-text-muted">
             <span>{prompt.copyCount.toLocaleString()} copies</span>
-            <span>{prompt.upvotes.toLocaleString()} upvotes</span>
           </div>
           <div className="flex items-center gap-1">
             <SaveButton prompt={prompt} />

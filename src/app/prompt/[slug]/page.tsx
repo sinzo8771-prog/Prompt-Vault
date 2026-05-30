@@ -27,13 +27,15 @@ export async function generateMetadata({
   };
 }
 
-const toolAffiliate: Record<string, string> = {
-  ChatGPT: "https://chat.openai.com",
-  Midjourney: "https://midjourney.com",
-  Claude: "https://claude.ai",
-  Gemini: "https://gemini.google.com",
-  Coding: "https://github.com/features/copilot",
-  Other: "https://chat.openai.com",
+const toolAffiliate: Record<string, { url: string; label: string }> = {
+  ChatGPT: { url: "https://chat.openai.com/?model=auto", label: "Try in ChatGPT" },
+  Midjourney: { url: "https://midjourney.com/membership/", label: "Get Midjourney" },
+  Claude: { url: "https://claude.ai/?model=auto", label: "Try in Claude" },
+  Gemini: { url: "https://gemini.google.com/app", label: "Try in Gemini" },
+  Copilot: { url: "https://github.com/features/copilot", label: "Get Copilot" },
+  DeepSeek: { url: "https://chat.deepseek.com/", label: "Try in DeepSeek" },
+  Coding: { url: "https://github.com/features/copilot", label: "Get Copilot" },
+  Other: { url: "https://chat.openai.com/?model=auto", label: "Try in ChatGPT" },
 };
 
 export default async function PromptDetailPage({
@@ -139,24 +141,27 @@ export default async function PromptDetailPage({
         {toolAffiliate[prompt.aiTool] && (
           <ScrollReveal delay={200}>
             <div className="p-6 bg-bg-card border border-border mb-10">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between gap-4">
                 <div>
                   <p className="text-sm font-semibold text-text mb-1">
-                    Try this in {prompt.aiTool}
+                    {toolAffiliate[prompt.aiTool].label}
                   </p>
                   <p className="text-xs text-text-muted font-mono">
-                    Best results with {" " + prompt.aiTool + "\u2019s"} latest model
+                    Best results with {prompt.aiTool}'s latest model
                   </p>
                 </div>
                 <a
-                  href={toolAffiliate[prompt.aiTool]}
+                  href={toolAffiliate[prompt.aiTool].url}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="magnetic-btn shrink-0"
                 >
-                  <span>{"Try in " + prompt.aiTool + " \u2192"}</span>
+                  <span>{toolAffiliate[prompt.aiTool].label} →</span>
                 </a>
               </div>
+              <p className="text-[10px] font-mono text-text-muted mt-3 pt-3 border-t border-border">
+                Affiliate link — we may earn a commission at no extra cost to you.
+              </p>
             </div>
           </ScrollReveal>
         )}

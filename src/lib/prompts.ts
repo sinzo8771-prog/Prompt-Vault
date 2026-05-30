@@ -12,7 +12,6 @@ export interface Prompt {
   category: string;
   tags: string[];
   copyCount: number;
-  upvotes: number;
   createdAt: string;
 }
 
@@ -71,7 +70,6 @@ function toPrompt(rec: any): Prompt {
     category: extractSelect(rec, "Category").toLowerCase().replace(/[&]/g, "and").replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, ""),
     tags: extractMultiSelect(rec, "Tags"),
     copyCount: extractNumber(rec, "CopyCount"),
-    upvotes: 0,
     createdAt: rec.created_time,
   };
 }
