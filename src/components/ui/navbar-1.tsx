@@ -6,7 +6,6 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
 import { Menu, X, Search } from "lucide-react"
-import { useAuth, UserButton } from "@clerk/nextjs"
 import { AnimatedLogo } from "@/components/AnimatedLogo"
 
 const Navbar1 = () => {
@@ -15,7 +14,6 @@ const Navbar1 = () => {
   const [searchOpen, setSearchOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
   const router = useRouter()
-  const { isSignedIn } = useAuth()
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50)
@@ -37,7 +35,7 @@ const Navbar1 = () => {
   const navLinks = [
     { href: "/category/writing", label: "Prompts" },
     { href: "/generator", label: "Generator" },
-    { href: "/account/library", label: "Library" },
+    { href: "/search", label: "Search" },
     { href: "/about", label: "About" },
   ]
 
@@ -95,41 +93,6 @@ const Navbar1 = () => {
             >
               <Search className="h-4 w-4" />
             </motion.button>
-
-            {!isSignedIn ? (
-              <>
-                <Link
-                  href="/sign-in"
-                  className="text-xs font-mono text-text-secondary hover:text-text transition-colors uppercase tracking-wider"
-                >
-                  Sign In
-                </Link>
-
-                <motion.div
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.3, delay: 0.3 }}
-                  whileHover={{ scale: 1.05 }}
-                >
-                  <Link
-                    href="/sign-up"
-                    className="inline-flex items-center justify-center px-5 py-2 text-xs font-bold uppercase tracking-wider bg-text text-ink hover:bg-accent hover:text-white transition-all duration-300"
-                  >
-                    Get Started
-                  </Link>
-                </motion.div>
-              </>
-            ) : (
-              <>
-                <Link
-                  href="/account/library"
-                  className="text-xs font-mono text-text-secondary hover:text-text transition-colors uppercase tracking-wider"
-                >
-                  Library
-                </Link>
-                <UserButton />
-              </>
-            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -223,51 +186,6 @@ const Navbar1 = () => {
                   </Link>
                 </motion.div>
               ))}
-
-              <div className="h-px bg-border my-4" />
-
-              {!isSignedIn ? (
-                <>
-                  <motion.div
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.4 }}
-                  >
-                    <Link
-                      href="/sign-in"
-                      className="text-lg font-medium text-text-secondary hover:text-accent transition-colors"
-                      onClick={toggleMenu}
-                    >
-                      Sign In
-                    </Link>
-                  </motion.div>
-
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.5 }}
-                    exit={{ opacity: 0, y: 20 }}
-                  >
-                    <Link
-                      href="/sign-up"
-                      className="inline-flex items-center justify-center w-full px-5 py-3 text-sm font-bold uppercase tracking-wider bg-text text-ink hover:bg-accent hover:text-white transition-all"
-                      onClick={toggleMenu}
-                    >
-                      Get Started
-                    </Link>
-                  </motion.div>
-                </>
-              ) : (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.4 }}
-                  className="flex items-center gap-3"
-                >
-                  <UserButton />
-                  <span className="text-sm text-text-secondary">Account</span>
-                </motion.div>
-              )}
             </div>
           </motion.div>
         )}
