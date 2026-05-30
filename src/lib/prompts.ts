@@ -1,8 +1,8 @@
 import "server-only";
 
-import { notion, NOTION_DATABASE_ID } from "./notion";
+import { notion, NOTION_DATABASE_ID, hasNotion } from "./notion";
+import { prompts as localPrompts, categories as localCategories } from "@/data/prompts";
 
-// Prompt type used throughout the app & stored in Notion
 export interface Prompt {
   id: string;
   slug: string;
@@ -25,7 +25,7 @@ export interface Category {
   color: string;
 }
 
-// ── Helpers ─────────────────────────────────────────────────
+// ── Notion Helpers ──────────────────────────────────────────
 
 function extractTitle(rec: { properties: Record<string, any> }, name = "Name"): string {
   const prop = rec.properties?.[name];
@@ -52,18 +52,11 @@ function extractMultiSelect(rec: { properties: Record<string, any> }, name: stri
   return [];
 }
 
-function extractCheckbox(rec: { properties: Record<string, any> }, name: string): boolean {
-  const prop = rec.properties?.[name];
-  return prop?.type === "checkbox" ? prop.checkbox : false;
-}
-
 function extractNumber(rec: { properties: Record<string, any> }, name: string): number {
   const prop = rec.properties?.[name];
   return prop?.type === "number" && prop.number != null ? prop.number : 0;
 }
 
-// We need the data_source_id for queries. We'll derive it from the database
-// or use a separate env var.
 const DATA_SOURCE_ID = process.env.NOTION_DATA_SOURCE_ID || "";
 
 function toPrompt(rec: any): Prompt {
@@ -83,9 +76,8 @@ function toPrompt(rec: any): Prompt {
   };
 }
 
-// ─── Query helpers ──────────────────────────────────────────
-
 async function queryDataSource(filter?: any, sorts?: any[]): Promise<any[]> {
+  if (!notion || !DATA_SOURCE_ID) return [];
   const allResults: any[] = [];
   let startCursor: string | undefined;
   let hasMore = true;
@@ -107,13 +99,16 @@ async function queryDataSource(filter?: any, sorts?: any[]): Promise<any[]> {
   return allResults;
 }
 
-// ─── Public API ─────────────────────────────────────────────
+// ─── Public API (with Notion → local fallback) ─────────────
 
 export async function getAllPrompts(): Promise<Prompt[]> {
+  if (!hasNotion) return localPrompts as Prompt[];
+
   const records = await queryDataSource(undefined, [
     { property: "CopyCount", direction: "descending" },
   ]);
-  return records.map(toPrompt);
+  const notionPrompts = records.map(toPrompt);
+  return notionPrompts.length > 0 ? notionPrompts : localPrompts as Prompt[];
 }
 
 export async function getFeaturedPrompts(count = 6): Promise<Prompt[]> {
@@ -126,6 +121,12 @@ export async function getTrendingPrompts(count = 10): Promise<Prompt[]> {
 }
 
 export async function getPromptsByCategory(category: string): Promise<Prompt[]> {
+  if (!hasNotion) {
+    return (localPrompts as Prompt[]).filter(
+      (p) => p.category.toLowerCase() === category.toLowerCase()
+    );
+  }
+
   const catMap: Record<string, string> = {
     writing: "Writing",
     design: "Design",
@@ -140,19 +141,42 @@ export async function getPromptsByCategory(category: string): Promise<Prompt[]> 
     { property: "Category", select: { equals: notionCat } },
     [{ property: "CopyCount", direction: "descending" }],
   );
-  return records.map(toPrompt);
+  const notionPrompts = records.map(toPrompt);
+  return notionPrompts.length > 0
+    ? notionPrompts
+    : (localPrompts as Prompt[]).filter(
+        (p) => p.category.toLowerCase() === category.toLowerCase()
+      );
 }
 
 export async function getPromptBySlug(slug: string): Promise<Prompt | null> {
+  if (!hasNotion) {
+    return (localPrompts as Prompt[]).find((p) => p.slug === slug) || null;
+  }
+
   const records = await queryDataSource({
     property: "Slug",
     rich_text: { equals: slug },
   });
-  return records.length > 0 ? toPrompt(records[0]) : null;
+  if (records.length > 0) return toPrompt(records[0]);
+
+  return (localPrompts as Prompt[]).find((p) => p.slug === slug) || null;
 }
 
 export async function searchPrompts(query: string): Promise<Prompt[]> {
   if (!query.trim()) return getAllPrompts();
+
+  if (!hasNotion) {
+    const q = query.toLowerCase();
+    return (localPrompts as Prompt[]).filter(
+      (p) =>
+        p.title.toLowerCase().includes(q) ||
+        p.body.toLowerCase().includes(q) ||
+        p.tags.some((t) => t.toLowerCase().includes(q)) ||
+        p.category.toLowerCase().includes(q) ||
+        p.aiTool.toLowerCase().includes(q)
+    );
+  }
 
   const records = await queryDataSource({
     or: [
@@ -161,10 +185,21 @@ export async function searchPrompts(query: string): Promise<Prompt[]> {
       { property: "Tags", multi_select: { contains: query } },
     ],
   });
-  return records.map(toPrompt);
+  const notionPrompts = records.map(toPrompt);
+  return notionPrompts.length > 0 ? notionPrompts : (() => {
+    const q = query.toLowerCase();
+    return (localPrompts as Prompt[]).filter(
+      (p) =>
+        p.title.toLowerCase().includes(q) ||
+        p.body.toLowerCase().includes(q) ||
+        p.tags.some((t) => t.toLowerCase().includes(q))
+    );
+  })();
 }
 
 export async function getCategories(): Promise<Category[]> {
+  if (!hasNotion) return localCategories as Category[];
+
   const prompts = await getAllPrompts();
 
   const catDef: Record<string, { icon: string; color: string; description: string }> = {

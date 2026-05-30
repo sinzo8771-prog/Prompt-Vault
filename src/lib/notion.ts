@@ -1,15 +1,8 @@
 import { Client } from "@notionhq/client";
 
-if (!process.env.NOTION_API_KEY) {
-  throw new Error("NOTION_API_KEY is not set in environment variables");
-}
+const apiKey = process.env.NOTION_API_KEY;
+const databaseId = process.env.NOTION_DATABASE_ID;
 
-if (!process.env.NOTION_DATABASE_ID) {
-  throw new Error("NOTION_DATABASE_ID is not set in environment variables");
-}
-
-export const notion = new Client({
-  auth: process.env.NOTION_API_KEY,
-});
-
-export const NOTION_DATABASE_ID = process.env.NOTION_DATABASE_ID;
+export const notion = apiKey ? new Client({ auth: apiKey }) : null;
+export const NOTION_DATABASE_ID = databaseId || "";
+export const hasNotion = Boolean(apiKey && databaseId);
