@@ -99,7 +99,7 @@ const Navbar1 = () => {
             {!isSignedIn ? (
               <>
                 <Link
-                  href="/login"
+                  href="/sign-in"
                   className="text-xs font-mono text-text-secondary hover:text-text transition-colors uppercase tracking-wider"
                 >
                   Sign In
@@ -112,7 +112,7 @@ const Navbar1 = () => {
                   whileHover={{ scale: 1.05 }}
                 >
                   <Link
-                    href="/signup"
+                    href="/sign-up"
                     className="inline-flex items-center justify-center px-5 py-2 text-xs font-bold uppercase tracking-wider bg-text text-ink hover:bg-accent hover:text-white transition-all duration-300"
                   >
                     Get Started
@@ -243,7 +243,7 @@ const Navbar1 = () => {
                     transition={{ delay: 0.4 }}
                   >
                     <Link
-                      href="/login"
+                      href="/sign-in"
                       className="text-lg font-medium text-text-secondary hover:text-accent transition-colors"
                       onClick={toggleMenu}
                     >
@@ -258,7 +258,7 @@ const Navbar1 = () => {
                     exit={{ opacity: 0, y: 20 }}
                   >
                     <Link
-                      href="/signup"
+                      href="/sign-up"
                       className="inline-flex items-center justify-center w-full px-5 py-3 text-sm font-bold uppercase tracking-wider bg-text text-ink hover:bg-accent hover:text-white transition-all"
                       onClick={toggleMenu}
                     >
