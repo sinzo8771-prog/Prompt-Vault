@@ -41,7 +41,7 @@ function extractRichText(rec: { properties: Record<string, any> }, name: string)
 
 function extractSelect(rec: { properties: Record<string, any> }, name: string): string {
   const prop = rec.properties?.[name];
-  if (prop?.type === "select" && prop.select) return prop.select.name;
+  if (prop?.type === "select" && prop.select) return prop.select.name || "";
   return "";
 }
 
@@ -102,11 +102,15 @@ async function queryDataSource(filter?: any, sorts?: any[]): Promise<any[]> {
 export async function getAllPrompts(): Promise<Prompt[]> {
   if (!hasNotion) return localPrompts as Prompt[];
 
-  const records = await queryDataSource(undefined, [
-    { property: "CopyCount", direction: "descending" },
-  ]);
-  const notionPrompts = records.map(toPrompt);
-  return notionPrompts.length > 0 ? notionPrompts : localPrompts as Prompt[];
+  try {
+    const records = await queryDataSource(undefined, [
+      { property: "CopyCount", direction: "descending" },
+    ]);
+    const notionPrompts = records.map(toPrompt);
+    return notionPrompts.length > 0 ? notionPrompts : localPrompts as Prompt[];
+  } catch {
+    return localPrompts as Prompt[];
+  }
 }
 
 export async function getFeaturedPrompts(count = 6): Promise<Prompt[]> {
@@ -125,32 +129,38 @@ export async function getPromptsByCategory(category: string): Promise<Prompt[]> 
     );
   }
 
-  // Map URL slug back to Notion category name
-  const slugToNotion: Record<string, string> = {
-    writing: "Writing",
-    design: "Design",
-    marketing: "Marketing",
-    development: "Development",
-    productivity: "Productivity",
-    creative: "Creative",
-    "sales-and-crm": "Sales & CRM",
-    "business-and-finance": "Business & Finance",
-    "education-and-learning": "Education & Learning",
-    "ai-and-automation": "AI & Automation",
-    "video-and-film": "Video & Film",
-  };
-  const notionCat = slugToNotion[category.toLowerCase()] || category;
+  try {
+    // Map URL slug back to Notion category name
+    const slugToNotion: Record<string, string> = {
+      writing: "Writing",
+      design: "Design",
+      marketing: "Marketing",
+      development: "Development",
+      productivity: "Productivity",
+      creative: "Creative",
+      "sales-and-crm": "Sales & CRM",
+      "business-and-finance": "Business & Finance",
+      "education-and-learning": "Education & Learning",
+      "ai-and-automation": "AI & Automation",
+      "video-and-film": "Video & Film",
+    };
+    const notionCat = slugToNotion[category.toLowerCase()] || category;
 
-  const records = await queryDataSource(
-    { property: "Category", select: { equals: notionCat } },
-    [{ property: "CopyCount", direction: "descending" }],
-  );
-  const notionPrompts = records.map(toPrompt);
-  return notionPrompts.length > 0
-    ? notionPrompts
-    : (localPrompts as Prompt[]).filter(
-        (p) => p.category.toLowerCase() === category.toLowerCase()
-      );
+    const records = await queryDataSource(
+      { property: "Category", select: { equals: notionCat } },
+      [{ property: "CopyCount", direction: "descending" }],
+    );
+    const notionPrompts = records.map(toPrompt);
+    return notionPrompts.length > 0
+      ? notionPrompts
+      : (localPrompts as Prompt[]).filter(
+          (p) => p.category.toLowerCase() === category.toLowerCase()
+        );
+  } catch {
+    return (localPrompts as Prompt[]).filter(
+      (p) => p.category.toLowerCase() === category.toLowerCase()
+    );
+  }
 }
 
 export async function getPromptBySlug(slug: string): Promise<Prompt | null> {
@@ -158,11 +168,13 @@ export async function getPromptBySlug(slug: string): Promise<Prompt | null> {
     return (localPrompts as Prompt[]).find((p) => p.slug === slug) || null;
   }
 
-  const records = await queryDataSource({
-    property: "Slug",
-    rich_text: { equals: slug },
-  });
-  if (records.length > 0) return toPrompt(records[0]);
+  try {
+    const records = await queryDataSource({
+      property: "Slug",
+      rich_text: { equals: slug },
+    });
+    if (records.length > 0) return toPrompt(records[0]);
+  } catch { /* fallback */ }
 
   return (localPrompts as Prompt[]).find((p) => p.slug === slug) || null;
 }
@@ -182,29 +194,32 @@ export async function searchPrompts(query: string): Promise<Prompt[]> {
     );
   }
 
-  const records = await queryDataSource({
-    or: [
-      { property: "Name", title: { contains: query } },
-      { property: "Body", rich_text: { contains: query } },
-      { property: "Tags", multi_select: { contains: query } },
-    ],
-  });
-  const notionPrompts = records.map(toPrompt);
-  return notionPrompts.length > 0 ? notionPrompts : (() => {
-    const q = query.toLowerCase();
-    return (localPrompts as Prompt[]).filter(
-      (p) =>
-        p.title.toLowerCase().includes(q) ||
-        p.body.toLowerCase().includes(q) ||
-        p.tags.some((t) => t.toLowerCase().includes(q))
-    );
-  })();
+  try {
+    const records = await queryDataSource({
+      or: [
+        { property: "Name", title: { contains: query } },
+        { property: "Body", rich_text: { contains: query } },
+        { property: "Tags", multi_select: { contains: query } },
+      ],
+    });
+    const notionPrompts = records.map(toPrompt);
+    if (notionPrompts.length > 0) return notionPrompts;
+  } catch { /* fallback */ }
+
+  const q = query.toLowerCase();
+  return (localPrompts as Prompt[]).filter(
+    (p) =>
+      p.title.toLowerCase().includes(q) ||
+      p.body.toLowerCase().includes(q) ||
+      p.tags.some((t) => t.toLowerCase().includes(q))
+  );
 }
 
 export async function getCategories(): Promise<Category[]> {
   if (!hasNotion) return localCategories as Category[];
 
-  const prompts = await getAllPrompts();
+  try {
+    const prompts = await getAllPrompts();
 
   const catDef: Record<string, { icon: string; color: string; description: string }> = {
     writing: { icon: "✍️", color: "#10a37f", description: "Writing, brainstorming, and content creation prompts." },
@@ -253,4 +268,7 @@ export async function getCategories(): Promise<Category[]> {
       };
     })
     .sort((a, b) => b.promptCount - a.promptCount);
+  } catch {
+    return localCategories as Category[];
+  }
 }
