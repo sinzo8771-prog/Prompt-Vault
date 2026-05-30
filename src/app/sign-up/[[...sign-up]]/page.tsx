@@ -11,7 +11,6 @@ export default function SignUpPage() {
 
       {/* Right: Auth Form */}
       <div className="flex-1 lg:flex-none lg:w-[480px] flex items-center justify-center px-6 py-12 bg-bg-card border-l border-border relative">
-        {/* Noise overlay */}
         <div
           className="absolute inset-0 pointer-events-none opacity-20"
           style={{
@@ -20,7 +19,6 @@ export default function SignUpPage() {
         />
 
         <div className="relative z-10 w-full max-w-sm">
-          {/* Header */}
           <div className="mb-8">
             <div className="label-tag mb-6 inline-flex">
               <span className="dot" />
@@ -34,34 +32,11 @@ export default function SignUpPage() {
             </p>
           </div>
 
-          {/* Clerk SignUp */}
           <SignUp
             routing="path"
             path="/sign-up"
-            appearance={{
-              elements: {
-                rootBox: "w-full",
-                card: "bg-transparent border-0 shadow-none w-full p-0",
-                headerTitle: "hidden",
-                headerSubtitle: "hidden",
-                socialButtonsBlockButton: "bg-bg border border-border text-text hover:border-text-hover hover:bg-bg-elevated w-full h-11 rounded-none font-mono text-xs uppercase tracking-wider transition-all",
-                socialButtonsBlockButtonText: "text-text-secondary font-mono text-xs",
-                socialButtonsIcon: "text-text-muted",
-                dividerLine: "bg-border",
-                dividerText: "text-text-muted font-mono text-[10px] uppercase tracking-[0.15em]",
-                formFieldLabel: "text-text-muted text-[10px] font-mono uppercase tracking-[0.15em] mb-1.5",
-                formFieldInput: "bg-bg border border-border text-text font-mono text-sm rounded-none h-11 px-3 focus:border-accent focus:ring-0 focus:outline-none placeholder:text-text-muted/50 transition-colors",
-                formButtonPrimary: "bg-accent hover:bg-accent-hover text-white font-mono font-bold text-xs uppercase tracking-wider rounded-none h-11 w-full transition-all",
-                footerActionLink: "text-accent hover:text-accent-hover font-mono text-xs",
-                footerActionText: "text-text-muted font-mono text-xs",
-                identityPreviewEditButton: "text-accent font-mono text-xs",
-                otpInputField: "bg-bg border border-border text-text font-mono rounded-none",
-                checkboxFieldInput: "accent-accent",
-              },
-            }}
           />
 
-          {/* Features */}
           <div className="mt-8 space-y-2">
             {[
               "Save unlimited prompts to your library",
@@ -75,7 +50,6 @@ export default function SignUpPage() {
             ))}
           </div>
 
-          {/* Footer */}
           <div className="mt-8 text-center">
             <p className="text-xs font-mono text-text-muted">
               Already have an account?{" "}
@@ -85,7 +59,6 @@ export default function SignUpPage() {
             </p>
           </div>
 
-          {/* ASCII divider */}
           <div className="mt-8 text-center font-mono text-[10px] text-text-muted/30">
             ────────────────
           </div>

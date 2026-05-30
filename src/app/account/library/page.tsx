@@ -116,7 +116,7 @@ export default function LibraryPage() {
           </p>
           {saved.length === 0 && (
             <Link
-              href="/category/chatgpt"
+              href="/category/writing"
               className="text-xs font-mono text-accent hover:underline"
             >
               Browse prompts &rarr;

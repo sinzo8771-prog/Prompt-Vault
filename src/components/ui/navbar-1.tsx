@@ -35,7 +35,7 @@ const Navbar1 = () => {
   }
 
   const navLinks = [
-    { href: "/category/chatgpt", label: "Prompts" },
+    { href: "/category/writing", label: "Prompts" },
     { href: "/generator", label: "Generator" },
     { href: "/account/library", label: "Library" },
     { href: "/about", label: "About" },
@@ -127,16 +127,7 @@ const Navbar1 = () => {
                 >
                   Library
                 </Link>
-                <UserButton
-                  appearance={{
-                    elements: {
-                      avatarBox: "w-8 h-8",
-                      userButtonPopoverCard: "bg-bg-card border border-border",
-                      userButtonPopoverItem: "hover:bg-bg-elevated text-text",
-                      userButtonPopoverFooter: "border-border",
-                    },
-                  }}
-                />
+                <UserButton />
               </>
             )}
           </div>
@@ -273,13 +264,7 @@ const Navbar1 = () => {
                   transition={{ delay: 0.4 }}
                   className="flex items-center gap-3"
                 >
-                  <UserButton
-                    appearance={{
-                      elements: {
-                        avatarBox: "w-10 h-10",
-                      },
-                    }}
-                  />
+                  <UserButton />
                   <span className="text-sm text-text-secondary">Account</span>
                 </motion.div>
               )}
