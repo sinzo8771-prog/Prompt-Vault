@@ -87,20 +87,12 @@ body {
 ::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 10px; }
 
 /* ── Cursor ── */
-* { cursor: none !important; }
-@media (max-width: 768px) { * { cursor: auto !important; } }
-
-.cursor-main {
-  width: 8px; height: 8px;
-  background: var(--color-accent);
-  border-radius: 50%;
-  position: fixed;
-  pointer-events: none;
-  z-index: 99999;
-  transition: transform 0.1s ease, opacity 0.15s ease;
-  mix-blend-mode: difference;
+@media (pointer: fine) {
+  * { cursor: none !important; }
 }
-.cursor-main.hovering { transform: scale(3); opacity: 0.6; }
+@media (pointer: coarse) {
+  * { cursor: auto !important; }
+}
 
 /* ── Grain ── */
 .grain {
