@@ -80,7 +80,7 @@ export function Footer() {
                 />
                 <button
                   type="submit"
-                  className="bg-primary text-ink px-6 py-2 rounded-md font-bold text-xs hover:brightness-110 active:scale-95 transition-all cursor-none"
+                  className="bg-primary text-ink px-6 py-2 rounded-md font-bold text-xs hover:brightness-110 active:scale-95 transition-all"
                 >
                   Join
                 </button>

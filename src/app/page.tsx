@@ -3,7 +3,6 @@ import { PromptCard } from "@/components/PromptCard";
 import { CategoryCard } from "@/components/CategoryCard";
 import { ScrollReveal } from "@/components/ScrollReveal";
 import { SearchBar } from "@/components/SearchBar";
-import { AdSense } from "@/components/AdSense";
 import Link from "next/link";
 import { ArrowRight, Sparkles, TrendingUp, Compass, Star } from "lucide-react";
 
@@ -80,7 +79,7 @@ export default async function HomePage() {
                     <Link
                       key={term}
                       href={`/search?q=${encodeURIComponent(term)}`}
-                      className="btn-ghost !py-1.5 !px-3.5 text-[11px] font-mono lowercase cursor-none"
+                      className="btn-ghost !py-1.5 !px-3.5 text-[11px] font-mono lowercase"
                     >
                       #{term}
                     </Link>
@@ -147,7 +146,7 @@ export default async function HomePage() {
             </div>
             <Link 
               href="/search" 
-              className="text-sm font-mono font-semibold text-accent hover:text-accent-hover transition-colors flex items-center gap-1 cursor-none"
+              className="text-sm font-mono font-semibold text-accent hover:text-accent-hover transition-colors flex items-center gap-1"
             >
               View all prompts <ArrowRight className="w-4 h-4" />
             </Link>
@@ -164,24 +163,7 @@ export default async function HomePage() {
       </section>
 
       {/* ═══════════════════════════════════════════════════════════════
-          GOOGLE ADS MONETIZATION BANNER
-      ═══════════════════════════════════════════════════════════════ */}
-      <section className="max-w-7xl mx-auto px-6 lg:px-8 my-8">
-        <div className="w-full flex justify-center bg-[#090e1c]/40 border border-border/40 py-6 rounded-2xl relative overflow-hidden backdrop-blur-sm">
-          <div className="absolute top-2 left-2 text-[9px] font-mono text-text-muted uppercase tracking-wider">Advertisement</div>
-          <div className="w-full max-w-4xl px-4 flex justify-center">
-            <AdSense
-              slot="1111111111"
-              style={{ display: "block", width: "100%", minHeight: 90 }}
-              format="horizontal"
-              className="mx-auto"
-            />
-          </div>
-        </div>
-      </section>
-
-      {/* ═══════════════════════════════════════════════════════════════
-          FEATURED HAND-PICKED PROMPTS
+          NEWSLETTER / CTA SECTION
       ═══════════════════════════════════════════════════════════════ */}
       <section className="section bg-[#090e1c]/30 border-y border-border/30">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
@@ -196,7 +178,7 @@ export default async function HomePage() {
               </div>
               <Link 
                 href="/search" 
-                className="text-sm font-mono font-semibold text-secondary hover:text-[#e8dbff] transition-colors flex items-center gap-1 cursor-none"
+                className="text-sm font-mono font-semibold text-secondary hover:text-[#e8dbff] transition-colors flex items-center gap-1"
               >
                 Browse directory <ArrowRight className="w-4 h-4" />
               </Link>
@@ -252,7 +234,7 @@ export default async function HomePage() {
               <ScrollReveal key={prompt.id} delay={i * 50}>
                 <Link
                   href={`/prompt/${prompt.slug}`}
-                  className="bg-[#161b2b]/40 p-5 rounded-2xl border border-border/40 hover:border-accent/40 transition-all duration-300 block group shadow-md hover:-translate-y-0.5 cursor-none"
+                  className="bg-[#161b2b]/40 p-5 rounded-2xl border border-border/40 hover:border-accent/40 transition-all duration-300 block group shadow-md hover:-translate-y-0.5"
                 >
                   <div className="flex justify-between items-center mb-4">
                     <span className={`w-7 h-7 flex items-center justify-center rounded-full text-xs font-bold font-mono ${textColors[i]}`}>
@@ -296,13 +278,13 @@ export default async function HomePage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link 
               href="/category/writing" 
-              className="btn-primary cursor-none !rounded-xl !px-8 !py-3.5 text-sm font-semibold tracking-wide"
+              className="btn-primary !rounded-xl !px-8 !py-3.5 text-sm font-semibold tracking-wide"
             >
               Explore Prompt Library
             </Link>
             <Link 
               href="/generator" 
-              className="btn-ghost cursor-none !rounded-xl !px-8 !py-3.5 text-sm font-semibold tracking-wide"
+              className="btn-ghost !rounded-xl !px-8 !py-3.5 text-sm font-semibold tracking-wide"
             >
               Try Free Generator
             </Link>

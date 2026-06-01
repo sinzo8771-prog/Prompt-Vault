@@ -24,7 +24,7 @@ export function CategoryCard({ category, index = 0 }: { category: Category; inde
   return (
     <Link
       href={`/category/${category.slug}`}
-      className="group relative block p-8 bg-[#161b2b]/40 border border-border/50 rounded-2xl hover:border-accent/40 transition-all duration-500 overflow-hidden shadow-lg hover:shadow-[0_15px_30px_-10px_rgba(0,0,0,0.5)] hover:-translate-y-1.5 cursor-none"
+      className="group relative block p-8 bg-[#161b2b]/40 border border-border/50 rounded-2xl hover:border-accent/40 transition-all duration-500 overflow-hidden shadow-lg hover:shadow-[0_15px_30px_-10px_rgba(0,0,0,0.5)] hover:-translate-y-1.5"
     >
       {/* Background glow hover */}
       <div className={`absolute inset-0 bg-gradient-to-br ${styling.split(" ")[0]} opacity-0 group-hover:opacity-100 transition-opacity duration-700`} />

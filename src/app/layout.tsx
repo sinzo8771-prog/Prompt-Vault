@@ -4,9 +4,7 @@ import { Toaster } from "react-hot-toast";
 import "./globals.css";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import { CustomCursor } from "@/components/CustomCursor";
 import { GrainOverlay } from "@/components/GrainOverlay";
-import { AdSense } from "@/components/AdSense";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -24,7 +22,7 @@ export const metadata: Metadata = {
     template: "%s — PromptVault",
   },
   description:
-    "Curated library of 124+ battle-tested AI prompts for ChatGPT, Claude, Gemini, Midjourney, Copilot, DeepSeek and more. 11 categories including AI Automation, Video & Film, Business, Education, and Sales.",
+    "Curated library of 256+ battle-tested AI prompts for ChatGPT, Claude, Gemini, Midjourney, Copilot, DeepSeek and more. 11 categories including AI Automation, Video & Film, Business, Education, and Sales.",
   keywords: ["AI prompts", "ChatGPT prompts", "Midjourney prompts", "Claude prompts", "Gemini prompts", "DeepSeek prompts", "Copilot prompts", "prompt engineering", "AI automation prompts", "video generation prompts"],
   openGraph: {
     title: "PromptVault — AI Prompts That Actually Work",
@@ -45,19 +43,8 @@ export default function RootLayout({
       className={`${inter.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-bg text-text">
-        <CustomCursor />
         <GrainOverlay />
         <Header />
-        <div className="w-full flex justify-center bg-bg/80 border-b border-border/40 py-2.5">
-          <div className="w-full max-w-7xl px-4">
-            <AdSense
-              slot="0000000000"
-              style={{ display: "block", width: "100%", minHeight: 90 }}
-              className="mx-auto"
-              format="horizontal"
-            />
-          </div>
-        </div>
         <main className="flex-1">{children}</main>
         <Footer />
         <Toaster

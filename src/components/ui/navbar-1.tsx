@@ -51,7 +51,7 @@ export function Header() {
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
-            <Link href="/" className="flex items-center gap-2.5 group cursor-none">
+            <Link href="/" className="flex items-center gap-2.5 group">
               <div className="w-9 h-9 rounded-xl bg-accent/15 border border-accent/20 flex items-center justify-center group-hover:bg-accent group-hover:text-ink transition-all duration-300">
                 <span className="text-accent group-hover:text-[#0e1322] font-bold text-base transition-colors">P</span>
               </div>
@@ -70,7 +70,7 @@ export function Header() {
                   <Link
                     key={item.href}
                     href={item.href}
-                    className={`relative px-4 py-2 text-[13px] font-medium tracking-wide transition-colors rounded-lg cursor-none ${
+                    className={`relative px-4 py-2 text-[13px] font-medium tracking-wide transition-colors rounded-lg ${
                       active
                         ? "text-text"
                         : "text-text-muted hover:text-text-secondary"
@@ -103,7 +103,7 @@ export function Header() {
               </form>
               <Link
                 href="/generator"
-                className="inline-flex items-center gap-1.5 px-5 py-2 rounded-full bg-accent text-[#0e1322] hover:bg-accent-hover active:scale-95 transition-all text-xs font-bold font-mono tracking-wide cursor-none"
+                className="inline-flex items-center gap-1.5 px-5 py-2 rounded-full bg-accent text-[#0e1322] hover:bg-accent-hover active:scale-95 transition-all text-xs font-bold font-mono tracking-wide"
               >
                 <Code className="w-3.5 h-3.5" />
                 Generate
@@ -113,7 +113,7 @@ export function Header() {
             {/* Mobile toggle */}
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
-              className="md:hidden p-2 text-text-muted hover:text-text transition-colors cursor-none"
+              className="md:hidden p-2 text-text-muted hover:text-text transition-colors"
             >
               {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
@@ -141,7 +141,7 @@ export function Header() {
                 >
                   <Link
                     href={item.href}
-                    className="text-3xl font-bold text-text hover:text-accent transition-colors cursor-none"
+                    className="text-3xl font-bold text-text hover:text-accent transition-colors"
                   >
                     {item.label}
                   </Link>

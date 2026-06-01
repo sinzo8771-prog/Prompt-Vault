@@ -86,14 +86,6 @@ body {
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 10px; }
 
-/* ── Cursor ── */
-@media (pointer: fine) {
-  * { cursor: none !important; }
-}
-@media (pointer: coarse) {
-  * { cursor: auto !important; }
-}
-
 /* ── Grain ── */
 .grain {
   position: fixed;

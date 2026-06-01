@@ -43,12 +43,12 @@ export function PromptCard({
     return (
       <div 
         onClick={handleTouchCard}
-        className="group relative p-5 bg-[#161b2b]/60 backdrop-blur-md border border-border/60 hover:border-accent/40 rounded-xl transition-all duration-300 shadow-[0_4px_20px_rgba(0,0,0,0.2)] hover:shadow-[0_4px_30px_rgba(192,193,255,0.1)] hover:-translate-y-0.5 cursor-none"
+        className="group relative p-5 bg-[#161b2b]/60 backdrop-blur-md border border-border/60 hover:border-accent/40 rounded-xl transition-all duration-300 shadow-[0_4px_20px_rgba(0,0,0,0.2)] hover:shadow-[0_4px_30px_rgba(192,193,255,0.1)] hover:-translate-y-0.5"
       >
         <div className="flex items-start justify-between gap-3 mb-2.5">
           <Link
             href={`/prompt/${prompt.slug}`}
-            className="text-sm font-semibold text-text hover:text-accent transition-colors line-clamp-1 flex-1 cursor-none"
+            className="text-sm font-semibold text-text hover:text-accent transition-colors line-clamp-1 flex-1"
           >
             {prompt.title}
           </Link>
@@ -76,7 +76,7 @@ export function PromptCard({
   return (
     <div 
       onClick={handleTouchCard}
-      className="flip-card h-[380px] w-full cursor-none"
+      className="flip-card h-[380px] w-full"
     >
       <div className={`flip-card-inner ${flipped ? "[transform:rotateY(180deg)]" : ""}`}>
         {/* FRONT SIDE */}
@@ -97,7 +97,7 @@ export function PromptCard({
 
             <Link
               href={`/prompt/${prompt.slug}`}
-              className="block text-lg font-bold text-text hover:text-accent transition-colors line-clamp-2 leading-tight cursor-none mb-3"
+              className="block text-lg font-bold text-text hover:text-accent transition-colors line-clamp-2 leading-tight mb-3"
             >
               {prompt.title}
             </Link>
@@ -113,7 +113,7 @@ export function PromptCard({
                 <Link
                   key={tag}
                   href={`/search?q=${encodeURIComponent(tag)}`}
-                  className="text-[10px] font-mono text-text-muted px-2 py-0.5 bg-text/5 rounded-md hover:bg-accent/15 hover:text-accent transition-all cursor-none"
+                  className="text-[10px] font-mono text-text-muted px-2 py-0.5 bg-text/5 rounded-md hover:bg-accent/15 hover:text-accent transition-all"
                 >
                   #{tag}
                 </Link>
