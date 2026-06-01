@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 export function CustomCursor() {
   const dotRef = useRef<HTMLDivElement>(null);
   const ringRef = useRef<HTMLDivElement>(null);
-  const [isHovering, setIsHovering] = useState(false);
+  const [hovering, setHovering] = useState(false);
 
   useEffect(() => {
     const dot = dotRef.current;
@@ -30,13 +30,13 @@ export function CustomCursor() {
       requestAnimationFrame(animateRing);
     };
 
-    const handleMouseEnter = () => setIsHovering(true);
-    const handleMouseLeave = () => setIsHovering(false);
+    const handleMouseEnter = () => setHovering(true);
+    const handleMouseLeave = () => setHovering(false);
 
     document.addEventListener("mousemove", handleMouseMove);
     animateRing();
 
-    const interactiveElements = document.querySelectorAll("a, button, input, textarea, [data-cursor-hover]");
+    const interactiveElements = document.querySelectorAll("a, button, input, textarea");
     interactiveElements.forEach((el) => {
       el.addEventListener("mouseenter", handleMouseEnter);
       el.addEventListener("mouseleave", handleMouseLeave);
@@ -53,8 +53,12 @@ export function CustomCursor() {
 
   return (
     <>
-      <div ref={dotRef} className={`cursor-dot ${isHovering ? "scale-0" : ""}`} />
-      <div ref={ringRef} className={`cursor-ring ${isHovering ? "!w-[60px] !h-[60px] !border-[var(--color-accent)]" : ""}`} />
+      <div ref={dotRef} className={`cursor-main ${hovering ? "hovering" : ""}`} />
+      <div
+        ref={ringRef}
+        className="fixed w-10 h-10 border border-accent/30 rounded-full pointer-events-none z-[99998] transition-all duration-300"
+        style={{ left: -100, top: -100 }}
+      />
     </>
   );
 }
