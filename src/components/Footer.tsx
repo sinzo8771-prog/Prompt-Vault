@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import toast from "react-hot-toast";
+import { AnimatedLogo } from "@/components/AnimatedLogo";
 
 const FOOTER_LINKS = [
   {
@@ -52,10 +53,8 @@ export function Footer() {
 
       <div className="max-w-7xl mx-auto px-6 lg:px-8 flex flex-col lg:flex-row justify-between items-start gap-12 relative z-10">
         <div className="max-w-md w-full">
-          <Link href="/" className="flex items-center gap-2.5 mb-6 group">
-            <div className="w-9 h-9 rounded-xl bg-accent/10 border border-accent/20 flex items-center justify-center group-hover:scale-105 transition-all">
-              <span className="text-accent font-bold text-base">P</span>
-            </div>
+          <Link href="/" className="flex items-center gap-3 mb-6 group">
+            <AnimatedLogo size={36} />
             <span className="text-xl font-bold tracking-tight text-text">
               PromptVault
             </span>

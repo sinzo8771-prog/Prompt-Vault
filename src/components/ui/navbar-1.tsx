@@ -6,6 +6,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, Menu, X, Code } from "lucide-react";
+import { AnimatedLogo } from "@/components/AnimatedLogo";
 
 const NAV = [
   { href: "/category/writing", label: "Prompts" },
@@ -51,10 +52,8 @@ export function Header() {
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
-            <Link href="/" className="flex items-center gap-2.5 group">
-              <div className="w-9 h-9 rounded-xl bg-accent/15 border border-accent/20 flex items-center justify-center group-hover:bg-accent group-hover:text-ink transition-all duration-300">
-                <span className="text-accent group-hover:text-[#0e1322] font-bold text-base transition-colors">P</span>
-              </div>
+            <Link href="/" className="flex items-center gap-3 group">
+              <AnimatedLogo size={36} />
               <span className="text-lg font-bold tracking-tight text-text hidden sm:block">
                 PromptVault
               </span>
