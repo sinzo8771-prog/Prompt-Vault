@@ -11,7 +11,7 @@ export function SearchBar({
 }) {
   return (
     <div className="w-full">
-      <GooeySearchBar 
+      <GooeySearchBar
         placeholder={size === "sm" ? "Search prompts..." : "What are you building?"}
       />
     </div>

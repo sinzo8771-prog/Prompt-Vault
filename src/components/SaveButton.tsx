@@ -14,9 +14,10 @@ interface SaveButtonProps {
     category: string;
   };
   size?: "sm" | "md";
+  className?: string;
 }
 
-export function SaveButton({ prompt, size = "sm" }: SaveButtonProps) {
+export function SaveButton({ prompt, size = "sm", className = "" }: SaveButtonProps) {
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
@@ -70,7 +71,7 @@ export function SaveButton({ prompt, size = "sm" }: SaveButtonProps) {
         saved
           ? "border-accent/30 bg-accent/10 text-accent"
           : "border-border text-text-muted hover:border-accent hover:text-accent"
-      }`}
+      } ${className}`}
     >
       {saved ? (
         <>
