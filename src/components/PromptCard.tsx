@@ -3,40 +3,43 @@ import type { Prompt } from "@/lib/prompts";
 import { CopyButton } from "./CopyButton";
 import { SaveButton } from "./SaveButton";
 
-const toolTags: Record<string, string> = {
-  ChatGPT: "GPT",
-  Midjourney: "MJ",
-  Claude: "CL",
-  Gemini: "GM",
-  Copilot: "CP",
-  General: "AI",
+const TOOL_BADGE: Record<string, string> = {
+  ChatGPT: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
+  Midjourney: "bg-violet-500/10 text-violet-400 border-violet-500/20",
+  Claude: "bg-blue-500/10 text-blue-400 border-blue-500/20",
+  Gemini: "bg-sky-500/10 text-sky-400 border-sky-500/20",
+  Copilot: "bg-indigo-500/10 text-indigo-400 border-indigo-500/20",
+  DeepSeek: "bg-cyan-500/10 text-cyan-400 border-cyan-500/20",
+  Coding: "bg-amber-500/10 text-amber-400 border-amber-500/20",
+  Other: "bg-text/5 text-text-secondary border-border",
 };
 
 export function PromptCard({
   prompt,
   compact = false,
-  index = 0,
 }: {
   prompt: Prompt;
   compact?: boolean;
   index?: number;
 }) {
+  const badge = TOOL_BADGE[prompt.aiTool] || TOOL_BADGE.Other;
+
   if (compact) {
     return (
-      <div className="group relative p-4 bg-bg-card border border-border hover:border-accent/50 transition-all duration-400">
+      <div className="group relative p-4 bg-bg-card border border-border/50 rounded-xl hover:border-accent/30 transition-all">
         <div className="flex items-start justify-between gap-3 mb-2">
           <Link
             href={`/prompt/${prompt.slug}`}
-            className="text-sm font-semibold text-text hover:text-accent transition-colors line-clamp-1"
+            className="text-sm font-semibold text-text hover:text-accent transition-colors line-clamp-1 flex-1"
           >
             {prompt.title}
           </Link>
-          <span className="shrink-0 text-[10px] font-mono font-bold px-2 py-0.5 bg-bg-elevated border border-border text-text-muted">
-            {toolTags[prompt.aiTool] || "AI"}
+          <span className={`shrink-0 text-[10px] font-mono font-bold px-2 py-0.5 border rounded-md uppercase tracking-wider ${badge}`}>
+            {prompt.aiTool}
           </span>
         </div>
         <p className="text-xs text-text-muted line-clamp-2 mb-3 font-mono leading-relaxed">
-          {prompt.body.slice(0, 100)}...
+          {prompt.body.slice(0, 120)}...
         </p>
         <div className="flex items-center justify-between">
           <span className="text-[10px] font-mono text-text-muted">
@@ -52,55 +55,53 @@ export function PromptCard({
   }
 
   return (
-    <div className="group relative bg-bg-card border border-border hover:border-accent/50 transition-all duration-400 overflow-hidden">
+    <div className="group relative bg-bg-card border border-border/50 border-t-border/80 hover:border-accent/30 transition-all duration-300 p-6 flex flex-col">
       {/* Top accent line */}
-      <div className="h-px bg-gradient-to-r from-accent/0 via-accent/60 to-accent/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+      <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-accent/0 via-accent/50 to-accent/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
-      <div className="p-5">
-        <div className="flex items-start justify-between gap-3 mb-3">
+      <div className="flex items-start justify-between gap-3 mb-3">
+        <Link
+          href={`/prompt/${prompt.slug}`}
+          className="text-base font-bold text-text group-hover:text-accent transition-colors line-clamp-2 leading-tight flex-1"
+        >
+          {prompt.title}
+        </Link>
+      </div>
+
+      <div className="flex items-center gap-2 mb-4">
+        <span className={`text-[10px] font-mono font-bold px-2 py-0.5 border rounded-md uppercase tracking-wider ${badge}`}>
+          {prompt.aiTool}
+        </span>
+        <span className="text-[10px] font-mono text-text-muted capitalize">
+          {prompt.category.replace(/-/g, " ")}
+        </span>
+      </div>
+
+      <div className="code-block mb-4 flex-1">
+        <pre className="text-xs font-mono whitespace-pre-wrap line-clamp-5 leading-relaxed text-text-secondary">
+          {prompt.body}
+        </pre>
+      </div>
+
+      <div className="flex items-center gap-1.5 flex-wrap mb-4">
+        {prompt.tags.slice(0, 3).map((tag) => (
           <Link
-            href={`/prompt/${prompt.slug}`}
-            className="text-base font-bold text-text hover:text-accent transition-colors line-clamp-2 leading-tight"
+            key={tag}
+            href={`/search?q=${encodeURIComponent(tag)}`}
+            className="text-[10px] font-mono text-text-muted px-2 py-0.5 bg-text/5 rounded-md hover:bg-accent/10 hover:text-accent transition-all"
           >
-            {prompt.title}
+            {tag}
           </Link>
-        </div>
+        ))}
+      </div>
 
-        <div className="flex items-center gap-2 mb-4">
-          <span className="text-[10px] font-mono font-bold px-2 py-0.5 bg-bg-elevated border border-border text-text-muted uppercase tracking-wider">
-            {prompt.aiTool}
-          </span>
-          <span className="text-[10px] font-mono text-text-muted uppercase tracking-wider">
-            {prompt.category}
-          </span>
-        </div>
-
-        <div className="p-4 bg-bg border border-border mb-4 prompt-block">
-          <pre className="text-xs font-mono whitespace-pre-wrap line-clamp-5 leading-relaxed text-text-secondary">
-            {prompt.body}
-          </pre>
-        </div>
-
-        <div className="flex items-center gap-1.5 flex-wrap mb-4">
-          {prompt.tags.slice(0, 3).map((tag) => (
-            <Link
-              key={tag}
-              href={`/search?q=${encodeURIComponent(tag)}`}
-              className="text-[10px] font-mono text-text-muted px-2 py-0.5 bg-bg-elevated border border-border hover:border-accent/30 hover:text-accent transition-all"
-            >
-              {tag}
-            </Link>
-          ))}
-        </div>
-
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4 text-[11px] font-mono text-text-muted">
-            <span>{prompt.copyCount.toLocaleString()} copies</span>
-          </div>
-          <div className="flex items-center gap-1">
-            <SaveButton prompt={prompt} />
-            <CopyButton text={prompt.body} />
-          </div>
+      <div className="flex items-center justify-between pt-3 border-t border-border/30">
+        <span className="text-[11px] font-mono text-text-muted">
+          {prompt.copyCount.toLocaleString()} copies
+        </span>
+        <div className="flex items-center gap-1">
+          <SaveButton prompt={prompt} />
+          <CopyButton text={prompt.body} />
         </div>
       </div>
     </div>

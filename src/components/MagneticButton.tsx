@@ -1,45 +1,21 @@
 "use client";
 
-import { useRef, MouseEvent } from "react";
+import Link from "next/link";
 
-export function MagneticButton({
-  children,
-  className = "",
-  href,
-}: {
+interface MagneticButtonProps {
+  href: string;
   children: React.ReactNode;
   className?: string;
-  href?: string;
-}) {
-  const ref = useRef<HTMLButtonElement | HTMLAnchorElement>(null);
+  variant?: "primary" | "outline";
+}
 
-  const handleMouseMove = (e: MouseEvent) => {
-    const el = ref.current;
-    if (!el) return;
-    const rect = el.getBoundingClientRect();
-    const x = e.clientX - rect.left - rect.width / 2;
-    const y = e.clientY - rect.top - rect.height / 2;
-    el.style.transform = `translate(${x * 0.2}px, ${y * 0.2}px)`;
-  };
-
-  const handleMouseLeave = () => {
-    const el = ref.current;
-    if (!el) return;
-    el.style.transform = "translate(0, 0)";
-  };
-
-  const Tag = href ? "a" : "button";
-  const props = href ? { href } : { type: "button" as const };
-
+export function MagneticButton({ href, children, className = "", variant = "primary" }: MagneticButtonProps) {
   return (
-    <Tag
-      ref={ref as never}
-      {...props}
-      className={`magnetic-btn ${className}`}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
+    <Link
+      href={href}
+      className={`btn-magnetic ${variant === "outline" ? "btn-magnetic-outline" : ""} ${className}`}
     >
       <span>{children}</span>
-    </Tag>
+    </Link>
   );
 }

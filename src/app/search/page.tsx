@@ -3,40 +3,28 @@ import { PromptCard } from "@/components/PromptCard";
 import { SearchPageBar } from "@/components/SearchPageBar";
 import { ScrollReveal } from "@/components/ScrollReveal";
 import type { Metadata } from "next";
+import Link from "next/link";
 
-export const revalidate = 0; // dynamic, always fresh
+export const revalidate = 0;
 
-export async function generateMetadata({
-  searchParams,
-}: {
-  searchParams: Promise<{ q?: string }>;
-}): Promise<Metadata> {
+export async function generateMetadata({ searchParams }: { searchParams: Promise<{ q?: string }> }) {
   const { q } = await searchParams;
-  return {
-    title: q ? "Search: " + q : "Search",
-    description: q ? "Results for \"" + q + "\"" : "Search prompts.",
-  };
+  return { title: q ? `Search: ${q}` : "Search", description: q ? `Results for "${q}"` : "Search prompts." };
 }
 
-export default async function SearchPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ q?: string }>;
-}) {
+export default async function SearchPage({ searchParams }: { searchParams: Promise<{ q?: string }> }) {
   const { q: query } = await searchParams;
   const results = await searchPrompts(query || "");
 
   return (
-    <div className="max-w-7xl mx-auto px-6 lg:px-8 py-12 pt-24">
+    <div className="max-w-7xl mx-auto px-6 lg:px-8 py-24 pt-32">
       <ScrollReveal>
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-text mb-4 tracking-tight">
+        <div className="mb-10">
+          <h1 className="text-3xl md:text-4xl font-bold text-text mb-6 tracking-tight">
             {query ? (
-              <>
-                Results for &quot;<span className="text-accent">{query}</span>&quot;
-              </>
+              <>Results for &quot;<span className="text-accent">{query}</span>&quot;</>
             ) : (
-              "Search"
+              <>Search <span className="text-accent">prompts</span></>
             )}
           </h1>
           <SearchPageBar defaultValue={query || ""} />
@@ -45,31 +33,29 @@ export default async function SearchPage({
 
       {query && (
         <ScrollReveal delay={50}>
-          <p className="text-xs font-mono text-text-muted mb-6">
+          <p className="text-xs font-mono text-text-muted mb-8">
             {results.length} result{results.length !== 1 ? "s" : ""}
           </p>
         </ScrollReveal>
       )}
 
       {results.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-border">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {results.map((prompt, i) => (
             <ScrollReveal key={prompt.id} delay={i * 30}>
-              <div className="bg-bg">
-                <PromptCard prompt={prompt} index={i} />
-              </div>
+              <PromptCard prompt={prompt} index={i} />
             </ScrollReveal>
           ))}
         </div>
       ) : (
         <ScrollReveal>
-          <div className="text-center py-20 border border-border">
-            <p className="text-text-muted font-mono text-sm mb-2">
-              {query ? "No results for \"" + query + "\"" : "Type to search"}
+          <div className="text-center py-20 border border-border/50 rounded-xl bg-bg-card">
+            <p className="text-text-muted font-mono text-sm mb-3">
+              {query ? `No results for "${query}"` : "Type above to search"}
             </p>
-            <a href="/category/writing" className="text-xs font-mono text-accent hover:underline">
-              Browse categories &rarr;
-            </a>
+            <Link href="/category/writing" className="text-xs font-mono text-accent hover:text-accent-hover transition-colors">
+              Browse categories →
+            </Link>
           </div>
         </ScrollReveal>
       )}
