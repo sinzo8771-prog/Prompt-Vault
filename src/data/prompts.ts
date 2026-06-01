@@ -21,15 +21,6 @@ export interface Category {
   color: string;
 }
 
-export interface Pack {
-  id: string;
-  name: string;
-  slug: string;
-  description: string;
-  priceUsd: number;
-  promptCount: number;
-  features: string[];
-}
 
 export const categories: Category[] = [
   { slug: "writing", name: "Writing", description: "Blog posts, articles, stories, scripts, and creative writing prompts.", icon: "✍️", promptCount: 0, color: "#10a37f" },
@@ -45,12 +36,6 @@ export const categories: Category[] = [
   { slug: "sales-and-crm", name: "Sales & CRM", description: "Sales scripts, CRM workflows, outreach, and deal strategy.", icon: "🎯", promptCount: 0, color: "#f97316" },
 ];
 
-export const packs: Pack[] = [
-  { id: "pack-1", name: "ChatGPT Mega Pack", slug: "chatgpt-mega-pack", description: "200+ carefully curated ChatGPT prompts covering writing, analysis, coding, and creative tasks.", priceUsd: 9, promptCount: 200, features: ["200+ expert prompts", "Lifetime updates", "Copy-paste ready", "PDF + online access"] },
-  { id: "pack-2", name: "Marketing Pro Pack", slug: "marketing-pro-pack", description: "100+ marketing prompts for ad copy, emails, social media, SEO, and brand strategy.", priceUsd: 12, promptCount: 100, features: ["100+ marketing prompts", "A/B test variations", "Platform-specific formats", "Monthly new prompts"] },
-  { id: "pack-3", name: "Developer Toolkit", slug: "developer-toolkit", description: "80+ developer prompts for code review, debugging, documentation, and architecture decisions.", priceUsd: 14, promptCount: 80, features: ["80+ dev prompts", "Multi-language support", "Architecture patterns", "CI/CD templates"] },
-  { id: "pack-4", name: "Job Seeker Bundle", slug: "job-seeker-bundle", description: "60+ prompts for resume writing, cover letters, LinkedIn optimization, and interview prep.", priceUsd: 7, promptCount: 60, features: ["60+ career prompts", "ATS-optimized formats", "Interview scripts", "LinkedIn templates"] },
-];
 
 export const prompts: Prompt[] = [
   // ===== WRITING =====

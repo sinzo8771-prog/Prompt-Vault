@@ -18,7 +18,7 @@ export default async function HomePage() {
     <>
       {/* ═══════════════════════════════════════════════════════════════
           HERO
-      ═══════════════════════════════════════════════════════════════ */}
+      {/* ===== HERO ===== */}
       <section className="relative min-h-[90vh] flex items-center overflow-hidden">
         {/* Background texture */}
         <div className="absolute inset-0 opacity-[0.02]" style={{
@@ -28,7 +28,7 @@ export default async function HomePage() {
 
         {/* Gradient orbs */}
         <div className="absolute top-1/4 -left-32 w-96 h-96 bg-accent/5 rounded-full blur-[120px]" />
-        <div className="absolute bottom-1/4 -right-32 w-96 h-96 bg-accent/3 rounded-full blur-[100px]" />
+        <div className="absolute bottom-1/4 -right-32 w-96 h-96 bg-secondary/5 rounded-full blur-[100px]" />
 
         <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-8 w-full py-32">
           <div className="max-w-4xl">
@@ -76,10 +76,10 @@ export default async function HomePage() {
 
             <ScrollReveal delay={400}>
               <div className="flex items-center gap-8">
-                <Link href="/category/writing" className="btn-magnetic">
+                <Link href="/category/writing" className="btn-primary">
                   <span>Browse Prompts →</span>
                 </Link>
-                <Link href="/generator" className="btn-magnetic btn-magnetic-outline">
+                <Link href="/generator" className="btn-ghost">
                   <span>Generator</span>
                 </Link>
               </div>

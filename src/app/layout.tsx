@@ -6,6 +6,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { CustomCursor } from "@/components/CustomCursor";
 import { GrainOverlay } from "@/components/GrainOverlay";
+import { AdSense } from "@/components/AdSense";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -47,6 +48,16 @@ export default function RootLayout({
         <CustomCursor />
         <GrainOverlay />
         <Header />
+        <div className="w-full flex justify-center bg-bg/80 border-b border-border/40 py-2.5">
+          <div className="w-full max-w-7xl px-4">
+            <AdSense
+              slot="0000000000"
+              style={{ display: "block", width: "100%", minHeight: 90 }}
+              className="mx-auto"
+              format="horizontal"
+            />
+          </div>
+        </div>
         <main className="flex-1">{children}</main>
         <Footer />
         <Toaster

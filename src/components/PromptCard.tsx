@@ -4,14 +4,14 @@ import { CopyButton } from "./CopyButton";
 import { SaveButton } from "./SaveButton";
 
 const TOOL_BADGE: Record<string, string> = {
-  ChatGPT: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
-  Midjourney: "bg-violet-500/10 text-violet-400 border-violet-500/20",
-  Claude: "bg-blue-500/10 text-blue-400 border-blue-500/20",
-  Gemini: "bg-sky-500/10 text-sky-400 border-sky-500/20",
-  Copilot: "bg-indigo-500/10 text-indigo-400 border-indigo-500/20",
-  DeepSeek: "bg-cyan-500/10 text-cyan-400 border-cyan-500/20",
-  Coding: "bg-amber-500/10 text-amber-400 border-amber-500/20",
-  Other: "bg-text/5 text-text-secondary border-border",
+  ChatGPT: "badge-chatgpt",
+  Midjourney: "badge-midjourney",
+  Claude: "badge-claude",
+  Gemini: "badge-gemini",
+  Copilot: "badge-copilot",
+  DeepSeek: "badge-deepseek",
+  Coding: "badge-coding",
+  Other: "badge-other",
 };
 
 export function PromptCard({
