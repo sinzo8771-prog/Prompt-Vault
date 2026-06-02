@@ -3,14 +3,15 @@
 import { useState, useCallback } from "react";
 import { ScrollReveal } from "@/components/ScrollReveal";
 import { GeneratorOutput } from "./output";
+import { Sparkles, Loader2, CheckCircle2 } from "lucide-react";
 
 const TOOLS = [
-  { id: "ChatGPT", icon: "💬", desc: "Text & analysis" },
-  { id: "Claude", icon: "🧠", desc: "Deep reasoning" },
-  { id: "Gemini", icon: "✨", desc: "Multimodal" },
-  { id: "Midjourney", icon: "🎨", desc: "Image generation" },
-  { id: "Copilot", icon: "💻", desc: "Code generation" },
-  { id: "DeepSeek", icon: "🔍", desc: "Fast & free" },
+  { id: "ChatGPT", icon: "💬", desc: "Text & analysis", color: "#10b981" },
+  { id: "Claude", icon: "🧠", desc: "Deep reasoning", color: "#6366f1" },
+  { id: "Gemini", icon: "✨", desc: "Multimodal", color: "#3b82f6" },
+  { id: "Midjourney", icon: "🎨", desc: "Image generation", color: "#a855f7" },
+  { id: "Copilot", icon: "💻", desc: "Code generation", color: "#f59e0b" },
+  { id: "DeepSeek", icon: "🔍", desc: "Fast & free", color: "#ec4899" },
 ];
 
 const CATEGORIES = [
@@ -56,7 +57,7 @@ export default function GeneratorPage() {
         body: JSON.stringify({
           tool: selectedTool,
           category: selectedCategory,
-          goal: goal.trim(),
+          description: goal.trim(),
           tone: selectedTone,
           language: "English",
         }),
@@ -110,10 +111,13 @@ export default function GeneratorPage() {
       {/* Header */}
       <ScrollReveal>
         <div className="text-center mb-16">
-          <p className="label mb-4">AI Prompt Generator</p>
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent-dim border border-accent/20 mb-6">
+            <Sparkles className="w-4 h-4 text-accent" />
+            <span className="text-xs font-mono font-medium text-accent">AI Prompt Generator</span>
+          </div>
           <h1 className="display-2 mb-6">
             Generate the<br />
-            <span className="text-accent">perfect</span> prompt.
+            <span className="text-gradient-warm">perfect</span> prompt.
           </h1>
           <p className="body-lg max-w-lg mx-auto">
             Describe what you need. Get a battle-tested prompt in seconds. Powered by free AI models — no account required.
@@ -123,10 +127,11 @@ export default function GeneratorPage() {
 
       {/* Form */}
       <ScrollReveal delay={100}>
-        <div className="bg-surface-container border border-border/50 rounded-2xl p-8 mb-8">
+        <div className="bg-bg-card border border-border/50 rounded-2xl p-8 mb-8">
           {/* Error */}
           {error && (
-            <div className="mb-6 p-4 bg-error/10 border border-error/30 rounded-xl">
+            <div className="mb-6 p-4 bg-error/10 border border-error/30 rounded-xl flex items-center gap-3">
+              <span className="text-error">⚠️</span>
               <p className="text-sm text-error">{error}</p>
             </div>
           )}
@@ -140,16 +145,17 @@ export default function GeneratorPage() {
                   key={tool.id}
                   type="button"
                   onClick={() => setSelectedTool(tool.id)}
-                  className={`flex flex-col items-center gap-2 p-3 rounded-xl border transition-all ${
+                  className={`flex flex-col items-center gap-2 p-4 rounded-xl border transition-all duration-300 ${
                     selectedTool === tool.id
-                      ? "border-accent bg-accent/10 shadow-[0_0_15px_rgba(99,102,241,0.15)]"
+                      ? "border-accent bg-accent/10 shadow-[0_0_20px_rgba(220,106,74,0.15)]"
                       : "border-border/50 bg-bg hover:border-accent/30 hover:bg-accent/5"
                   }`}
                 >
-                  <span className="text-xl">{tool.icon}</span>
+                  <span className="text-2xl">{tool.icon}</span>
                   <span className={`text-xs font-medium ${selectedTool === tool.id ? "text-accent" : "text-text-secondary"}`}>
                     {tool.id}
                   </span>
+                  <span className="text-[10px] text-text-muted hidden sm:block">{tool.desc}</span>
                 </button>
               ))}
             </div>
@@ -157,17 +163,17 @@ export default function GeneratorPage() {
 
           {/* Category */}
           <div className="mb-8">
-            <label className="label mb-3 block">2. Select Category (optional)</label>
+            <label className="label mb-3 block">2. Select Category <span className="text-text-muted">(optional)</span></label>
             <div className="flex flex-wrap gap-2">
               {CATEGORIES.map((cat) => (
                 <button
                   key={cat}
                   type="button"
                   onClick={() => setSelectedCategory(selectedCategory === cat ? "" : cat)}
-                  className={`btn-ghost ${
+                  className={`px-3 py-1.5 rounded-lg border text-xs font-medium transition-all ${
                     selectedCategory === cat
-                      ? "!border-accent !bg-accent/10 !text-accent"
-                      : ""
+                      ? "border-accent bg-accent/10 text-accent"
+                      : "border-border/50 bg-bg text-text-secondary hover:border-accent/30 hover:text-text"
                   }`}
                 >
                   {cat}
@@ -183,7 +189,7 @@ export default function GeneratorPage() {
               placeholder="E.g., Write a cold email sequence for a B2B SaaS product targeting HR managers. The email should focus on pain points around employee retention..."
               value={goal}
               onChange={(e) => { setGoal(e.target.value); setError(""); }}
-              className="w-full h-36 px-4 py-3 bg-bg border border-border/50 rounded-xl text-sm text-text placeholder:text-text-muted focus:outline-none focus:border-accent/50 transition-colors resize-none font-mono"
+              className="w-full h-36 px-4 py-3 bg-bg border border-border/50 rounded-xl text-sm text-text placeholder:text-text-muted focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/20 transition-all resize-none font-mono"
             />
             <p className="text-xs text-text-muted mt-2">Be specific for better results. Include audience, format, and key points.</p>
           </div>
@@ -215,21 +221,21 @@ export default function GeneratorPage() {
             <button
               type="button"
               onClick={handleGenerate}
-              disabled={loading}
+              disabled={loading || !goal.trim()}
               className={`btn-primary !px-10 !py-4 text-base font-semibold tracking-wide ${
-                loading ? "opacity-60 cursor-not-allowed" : ""
+                loading || !goal.trim() ? "opacity-50 cursor-not-allowed" : ""
               }`}
             >
               {loading ? (
                 <span className="flex items-center gap-2">
-                  <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                  </svg>
+                  <Loader2 className="w-4 h-4 animate-spin" />
                   Generating...
                 </span>
               ) : (
-                <>Generate Prompt →</>
+                <>
+                  <Sparkles className="w-4 h-4" />
+                  Generate Prompt
+                </>
               )}
             </button>
           </div>
@@ -238,6 +244,30 @@ export default function GeneratorPage() {
 
       {/* Output */}
       <GeneratorOutput output={output} loading={loading} onCopy={handleCopy} copied={copied} />
+
+      {/* Tips */}
+      <ScrollReveal delay={300}>
+        <div className="mt-12 p-6 bg-bg-card border border-border/50 rounded-2xl">
+          <h3 className="text-sm font-semibold text-text mb-4 flex items-center gap-2">
+            <CheckCircle2 className="w-4 h-4 text-tertiary" />
+            Tips for better prompts
+          </h3>
+          <ul className="space-y-2 text-xs text-text-muted">
+            <li className="flex items-start gap-2">
+              <span className="text-accent mt-0.5">•</span>
+              <span><strong className="text-text-secondary">Be specific:</strong> Include target audience, format, length, and key points</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-accent mt-0.5">•</span>
+              <span><strong className="text-text-secondary">Use examples:</strong> If possible, include sample output or reference content</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-accent mt-0.5">•</span>
+              <span><strong className="text-text-secondary">Iterate:</strong> Refine the generated prompt by adding more context</span>
+            </li>
+          </ul>
+        </div>
+      </ScrollReveal>
     </div>
   );
 }
