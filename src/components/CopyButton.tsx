@@ -1,54 +1,72 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Copy, Check } from "lucide-react";
 import toast from "react-hot-toast";
 
-export function CopyButton({
-  text,
-  className = "",
-  showLabel = true,
-}: {
-  text: string;
-  className?: string;
-  showLabel?: boolean;
-}) {
+export function CopyButton({ text }: { text: string }) {
   const [copied, setCopied] = useState(false);
 
-  const handleCopy = useCallback(async () => {
+  const handleCopy = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
     try {
       await navigator.clipboard.writeText(text);
       setCopied(true);
-      toast.success("Copied to clipboard");
+      toast.success("Copied to clipboard!", {
+        icon: "📋",
+        style: {
+          background: "#131316",
+          color: "#f5f5f4",
+          border: "1px solid #1f1f24",
+        },
+      });
       setTimeout(() => setCopied(false), 2000);
     } catch {
       toast.error("Failed to copy");
     }
-  }, [text]);
+  };
 
   return (
-    <button
+    <motion.button
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.95 }}
       onClick={handleCopy}
-      className={`inline-flex items-center gap-1.5 font-mono border transition-all px-3 py-1.5 text-xs ${
+      className={`relative flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono font-medium transition-all duration-300 ${
         copied
-          ? "bg-success/10 text-success border-success/30"
-          : "bg-transparent text-text-secondary border-border hover:border-accent/50 hover:text-accent"
-      } ${className}`}
+          ? "bg-success/10 text-success border border-success/20"
+          : "bg-bg-card text-text-muted border border-border/50 hover:text-accent hover:border-accent/30 hover:bg-accent-dim"
+      }`}
     >
-      {copied ? (
-        <>
-          <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-          </svg>
-          {showLabel && "Copied"}
-        </>
-      ) : (
-        <>
-          <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-          </svg>
-          {showLabel && "Copy"}
-        </>
-      )}
-    </button>
+      <AnimatePresence mode="wait">
+        {copied ? (
+          <motion.div
+            key="check"
+            initial={{ scale: 0, rotate: -180 }}
+            animate={{ scale: 1, rotate: 0 }}
+            exit={{ scale: 0, rotate: 180 }}
+            transition={{ duration: 0.2 }}
+            className="flex items-center gap-1.5"
+          >
+            <Check className="w-3.5 h-3.5" />
+            <span>Copied!</span>
+          </motion.div>
+        ) : (
+          <motion.div
+            key="copy"
+            initial={{ scale: 0, rotate: 180 }}
+            animate={{ scale: 1, rotate: 0 }}
+            exit={{ scale: 0, rotate: -180 }}
+            transition={{ duration: 0.2 }}
+            className="flex items-center gap-1.5"
+          >
+            <Copy className="w-3.5 h-3.5" />
+            <span>Copy</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.button>
   );
 }

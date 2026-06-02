@@ -92,7 +92,7 @@ export default async function PromptDetailPage({ params }: { params: Promise<{ s
             <div className="flex items-center justify-between px-4 py-3 border border-border/50 border-b-0 rounded-t-xl bg-bg-card/50">
               <span className="text-xs font-mono uppercase tracking-wider text-text-muted">Prompt</span>
               <div className="flex items-center gap-2">
-                <SaveButton prompt={prompt} size="md" />
+                <SaveButton prompt={prompt} />
                 <CopyButton text={prompt.body} />
               </div>
             </div>

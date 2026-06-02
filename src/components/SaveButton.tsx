@@ -1,91 +1,90 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Bookmark, BookmarkCheck } from "lucide-react";
 import toast from "react-hot-toast";
+import type { Prompt } from "@/lib/prompts";
 
-interface SaveButtonProps {
-  prompt: {
-    id: string;
-    slug: string;
-    title: string;
-    body: string;
-    aiTool: string;
-    category: string;
-  };
-  size?: "sm" | "md";
-  className?: string;
-}
+export function SaveButton({ prompt }: { prompt: Prompt }) {
+  // Use lazy initialization to check localStorage once
+  const [saved, setSaved] = useState(() => {
+    if (typeof window === "undefined") return false;
+    const favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
+    return favorites.includes(prompt.id);
+  });
 
-export function SaveButton({ prompt, size = "sm", className = "" }: SaveButtonProps) {
-  const [saved, setSaved] = useState(false);
+  const handleSave = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
 
-  useEffect(() => {
-    const stored = localStorage.getItem("promptvault-saved");
-    if (stored) {
-      try {
-        const savedPrompts = JSON.parse(stored);
-        Promise.resolve().then(() =>
-          setSaved(savedPrompts.some((p: { id: string }) => p.id === prompt.id))
-        );
-      } catch { /* ignore */ }
-    }
-  }, [prompt.id]);
-
-  const toggleSave = useCallback(() => {
-    const stored = localStorage.getItem("promptvault-saved");
-    let savedPrompts: Array<{
-      id: string;
-      slug: string;
-      title: string;
-      body: string;
-      aiTool: string;
-      category: string;
-      savedAt: number;
-    }> = [];
-
-    try {
-      savedPrompts = stored ? JSON.parse(stored) : [];
-    } catch { /* ignore */ }
+    const favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
 
     if (saved) {
-      savedPrompts = savedPrompts.filter((p) => p.id !== prompt.id);
-      localStorage.setItem("promptvault-saved", JSON.stringify(savedPrompts));
+      const newFavorites = favorites.filter((id: string) => id !== prompt.id);
+      localStorage.setItem("favorites", JSON.stringify(newFavorites));
       setSaved(false);
-      toast.success("Removed from library");
-    } else {
-      savedPrompts.unshift({
-        ...prompt,
-        savedAt: Date.now(),
+      toast("Removed from favorites", {
+        icon: "🔖",
+        style: {
+          background: "#131316",
+          color: "#f5f5f4",
+          border: "1px solid #1f1f24",
+        },
       });
-      localStorage.setItem("promptvault-saved", JSON.stringify(savedPrompts));
+    } else {
+      favorites.push(prompt.id);
+      localStorage.setItem("favorites", JSON.stringify(favorites));
       setSaved(true);
-      toast.success("Saved to library");
+      toast.success("Saved to favorites!", {
+        icon: "❤️",
+        style: {
+          background: "#131316",
+          color: "#f5f5f4",
+          border: "1px solid #1f1f24",
+        },
+      });
     }
-  }, [prompt, saved]);
+  };
 
   return (
-    <button
-      onClick={toggleSave}
-      className={`inline-flex items-center gap-1.5 font-mono border transition-all ${
-        size === "sm" ? "px-2 py-1 text-[10px]" : "px-3 py-1.5 text-xs"
-      } ${
+    <motion.button
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.95 }}
+      onClick={handleSave}
+      className={`relative flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono font-medium transition-all duration-300 ${
         saved
-          ? "border-accent/30 bg-accent/10 text-accent"
-          : "border-border text-text-muted hover:border-accent hover:text-accent"
-      } ${className}`}
+          ? "bg-accent/10 text-accent border border-accent/20"
+          : "bg-bg-card text-text-muted border border-border/50 hover:text-accent hover:border-accent/30 hover:bg-accent-dim"
+      }`}
     >
-      {saved ? (
-        <>
-          <BookmarkCheck className="w-3 h-3" />
-          Saved
-        </>
-      ) : (
-        <>
-          <Bookmark className="w-3 h-3" />
-          Save
-        </>
-      )}
-    </button>
+      <AnimatePresence mode="wait">
+        {saved ? (
+          <motion.div
+            key="saved"
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            exit={{ scale: 0 }}
+            transition={{ type: "spring", stiffness: 500, damping: 20 }}
+            className="flex items-center gap-1.5"
+          >
+            <BookmarkCheck className="w-3.5 h-3.5" />
+            <span>Saved</span>
+          </motion.div>
+        ) : (
+          <motion.div
+            key="save"
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            exit={{ scale: 0 }}
+            transition={{ type: "spring", stiffness: 500, damping: 20 }}
+            className="flex items-center gap-1.5"
+          >
+            <Bookmark className="w-3.5 h-3.5" />
+            <span>Save</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.button>
   );
 }
