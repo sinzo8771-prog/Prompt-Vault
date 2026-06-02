@@ -1,6 +1,6 @@
 import "server-only";
 
-import { notion, NOTION_DATABASE_ID, hasNotion } from "./notion";
+import { notion, hasNotion } from "./notion";
 import { prompts as localPrompts, categories as localCategories } from "@/data/prompts";
 
 export interface Prompt {
@@ -26,62 +26,66 @@ export interface Category {
 
 // ── Notion Helpers ──────────────────────────────────────────
 
-function extractTitle(rec: { properties: Record<string, any> }, name = "Name"): string {
+type NotionProperties = Record<string, { type: string; [key: string]: unknown }>;
+
+function extractTitle(rec: { properties: NotionProperties }, name = "Name"): string {
   const prop = rec.properties?.[name];
-  if (prop?.type === "title" && prop.title?.length > 0) return prop.title[0].plain_text;
+  if (prop?.type === "title" && Array.isArray(prop.title) && prop.title.length > 0) return prop.title[0].plain_text;
   return "";
 }
 
-function extractRichText(rec: { properties: Record<string, any> }, name: string): string {
+function extractRichText(rec: { properties: NotionProperties }, name: string): string {
   const prop = rec.properties?.[name];
-  if (prop?.type === "rich_text" && prop.rich_text?.length > 0)
-    return prop.rich_text.map((t: any) => t.plain_text).join("");
+  if (prop?.type === "rich_text" && Array.isArray(prop.rich_text) && prop.rich_text.length > 0)
+    return prop.rich_text.map((t: { plain_text: string }) => t.plain_text).join("");
   return "";
 }
 
-function extractSelect(rec: { properties: Record<string, any> }, name: string): string {
+function extractSelect(rec: { properties: NotionProperties }, name: string): string {
   const prop = rec.properties?.[name];
-  if (prop?.type === "select" && prop.select) return prop.select.name || "";
+  if (prop?.type === "select" && prop.select) return (prop.select as { name?: string }).name || "";
   return "";
 }
 
-function extractMultiSelect(rec: { properties: Record<string, any> }, name: string): string[] {
+function extractMultiSelect(rec: { properties: NotionProperties }, name: string): string[] {
   const prop = rec.properties?.[name];
-  if (prop?.type === "multi_select") return prop.multi_select.map((s: any) => s.name);
+  if (prop?.type === "multi_select" && Array.isArray(prop.multi_select))
+    return prop.multi_select.map((s: { name: string }) => s.name);
   return [];
 }
 
-function extractNumber(rec: { properties: Record<string, any> }, name: string): number {
+function extractNumber(rec: { properties: NotionProperties }, name: string): number {
   const prop = rec.properties?.[name];
-  return prop?.type === "number" && prop.number != null ? prop.number : 0;
+  return prop?.type === "number" && typeof prop.number === "number" ? prop.number : 0;
 }
 
-const DATA_SOURCE_ID = process.env.NOTION_DATA_SOURCE_ID || "";
-
-function toPrompt(rec: any): Prompt {
-  const title = extractTitle(rec);
-  const slug = extractRichText(rec, "Slug") || title.toLowerCase().replace(/\s+/g, "-");
+function toPrompt(rec: { id: string; created_time: string; properties: NotionProperties }): Prompt {
   return {
     id: rec.id,
-    slug,
-    title,
+    slug: extractRichText(rec, "Slug"),
+    title: extractTitle(rec, "Name"),
     body: extractRichText(rec, "Body"),
     aiTool: extractSelect(rec, "AI Tool"),
-    category: extractSelect(rec, "Category").toLowerCase().replace(/[&]/g, "and").replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, ""),
+    category: extractSelect(rec, "Category"),
     tags: extractMultiSelect(rec, "Tags"),
     copyCount: extractNumber(rec, "CopyCount"),
     createdAt: rec.created_time,
   };
 }
 
-async function queryDataSource(filter?: any, sorts?: any[]): Promise<any[]> {
+const DATA_SOURCE_ID = process.env.NOTION_DATA_SOURCE_ID || "";
+
+type NotionQueryFilter = Record<string, unknown>;
+type NotionQuerySort = { property: string; direction: "ascending" | "descending" } | { timestamp: "created_time" | "last_edited_time"; direction: "ascending" | "descending" };
+
+async function queryDataSource(filter?: NotionQueryFilter, sorts?: NotionQuerySort[]): Promise<{ id: string; created_time: string; properties: NotionProperties }[]> {
   if (!notion || !DATA_SOURCE_ID) return [];
-  const allResults: any[] = [];
+  const allResults: { id: string; created_time: string; properties: NotionProperties }[] = [];
   let startCursor: string | undefined;
   let hasMore = true;
 
   while (hasMore) {
-    const params: any = {
+    const params: Record<string, unknown> = {
       data_source_id: DATA_SOURCE_ID,
       page_size: 100,
     };
@@ -89,13 +93,15 @@ async function queryDataSource(filter?: any, sorts?: any[]): Promise<any[]> {
     if (sorts) params.sorts = sorts;
     if (startCursor) params.start_cursor = startCursor;
 
-    const response = await notion.dataSources.query(params);
-    allResults.push(...response.results);
+    const response = await notion.dataSources.query(params as unknown as Parameters<typeof notion.dataSources.query>[0]);
+    const results = (response.results ?? []) as { id: string; created_time: string; properties: NotionProperties }[];
+    allResults.push(...results);
     hasMore = response.has_more;
     startCursor = response.next_cursor ?? undefined;
   }
   return allResults;
 }
+
 
 // ─── Public API (with Notion → local fallback) ─────────────
 

@@ -2,8 +2,7 @@ import { searchPrompts } from "@/lib/prompts";
 import { PromptCard } from "@/components/PromptCard";
 import { SearchPageBar } from "@/components/SearchPageBar";
 import { ScrollReveal } from "@/components/ScrollReveal";
-import type { Metadata } from "next";
-import Link from "next/link";
+import NextLink from "next/link";
 
 export const revalidate = 0;
 
@@ -53,9 +52,9 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
             <p className="text-text-muted font-mono text-sm mb-3">
               {query ? `No results for "${query}"` : "Type above to search"}
             </p>
-            <Link href="/category/writing" className="text-xs font-mono text-accent hover:text-accent-hover transition-colors">
+            <NextLink href="/category/writing" className="text-xs font-mono text-accent hover:text-accent-hover transition-colors">
               Browse categories →
-            </Link>
+            </NextLink>
           </div>
         </ScrollReveal>
       )}

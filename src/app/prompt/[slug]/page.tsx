@@ -1,11 +1,10 @@
 import { notFound } from "next/navigation";
+import Link from "next/link";
 import { getPromptBySlug, getAllPrompts } from "@/lib/prompts";
 import { CopyButton } from "@/components/CopyButton";
 import { SaveButton } from "@/components/SaveButton";
 import { PromptCard } from "@/components/PromptCard";
 import { ScrollReveal } from "@/components/ScrollReveal";
-import type { Metadata } from "next";
-import Link from "next/link";
 
 export const revalidate = 60;
 
@@ -14,12 +13,7 @@ export async function generateStaticParams() {
   return prompts.map((p) => ({ slug: p.slug }));
 }
 
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params;
-  const prompt = await getPromptBySlug(slug);
-  if (!prompt) return {};
-  return { title: prompt.title, description: prompt.body.slice(0, 160) };
-}
+export const metadata = { title: "Prompt", description: "AI prompt from PromptVault." };
 
 const toolAffiliate: Record<string, { url: string; label: string }> = {
   ChatGPT: { url: "https://chat.openai.com/?model=auto", label: "Try in ChatGPT" },
@@ -58,10 +52,10 @@ export default async function PromptDetailPage({ params }: { params: Promise<{ s
         <ScrollReveal>
           <nav className="flex items-center gap-2 text-xs font-mono text-text-muted mb-10">
             <Link href="/" className="hover:text-accent transition-colors">Home</Link>
-            <span>/</span>
-            <Link href={`/category/${prompt.category}`} className="hover:text-accent transition-colors capitalize">
-              {prompt.category.replace(/-/g, " ")}
-            </Link>
+             <span>/</span>
+               <Link href={`/category/${prompt.category}`} className="hover:text-accent transition-colors capitalize">
+               {prompt.category.replace(/-/g, " ")}
+             </Link>
             <span>/</span>
             <span className="text-text-secondary line-clamp-1">{prompt.title}</span>
           </nav>
@@ -78,9 +72,9 @@ export default async function PromptDetailPage({ params }: { params: Promise<{ s
                 {prompt.aiTool}
               </span>
               <Link
-                href={`/category/${prompt.category}`}
-                className="text-xs font-mono text-text-muted hover:text-accent transition-colors capitalize"
-              >
+                 href={`/category/${prompt.category}`}
+                 className="text-xs font-mono text-text-muted hover:text-accent transition-colors capitalize"
+               >
                 {prompt.category.replace(/-/g, " ")}
               </Link>
             </div>
@@ -115,13 +109,13 @@ export default async function PromptDetailPage({ params }: { params: Promise<{ s
           <div className="flex flex-wrap gap-2 mb-10">
             {prompt.tags.map((tag) => (
               <Link
-                key={tag}
-                href={`/search?q=${encodeURIComponent(tag)}`}
+                 key={tag}
+                 href={`/search?q=${encodeURIComponent(tag)}`}
                 className="text-xs font-mono text-text-muted px-3 py-1.5 bg-bg-card border border-border/50 rounded-lg hover:border-accent/30 hover:text-accent transition-all"
               >
                 {tag}
-              </Link>
-            ))}
+               </Link>
+             ))}
           </div>
         </ScrollReveal>
 

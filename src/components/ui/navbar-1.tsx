@@ -29,7 +29,7 @@ export function Header() {
   }, []);
 
   useEffect(() => {
-    setMobileOpen(false);
+    Promise.resolve().then(() => setMobileOpen(false));
   }, [pathname]);
 
   const handleSearchSubmit = (e: React.FormEvent) => {

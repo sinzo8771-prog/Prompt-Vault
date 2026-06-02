@@ -3,8 +3,6 @@ import { getCategories, getPromptsByCategory } from "@/lib/prompts";
 import { PromptCard } from "@/components/PromptCard";
 import { ScrollReveal } from "@/components/ScrollReveal";
 import { SearchPageBar } from "@/components/SearchPageBar";
-import type { Metadata } from "next";
-
 export const revalidate = 60;
 
 export async function generateStaticParams() {
@@ -23,12 +21,12 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const [categories, categoryPrompts] = await Promise.all([
+  const [categories] = await Promise.all([
     getCategories(),
-    getPromptsByCategory(slug),
   ]);
   const category = categories.find((c) => c.slug === slug);
   if (!category) notFound();
+  const categoryPrompts = await getPromptsByCategory(slug);
 
   return (
     <div className="max-w-7xl mx-auto px-6 lg:px-8 py-24 pt-32">

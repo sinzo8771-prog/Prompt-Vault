@@ -1,7 +1,5 @@
 import { ScrollReveal } from "@/components/ScrollReveal";
 import { MagneticButton } from "@/components/MagneticButton";
-import Link from "next/link";
-
 export const metadata = { title: "About — PromptVault", description: "About PromptVault — curated AI prompts without the BS." };
 
 export default function AboutPage() {

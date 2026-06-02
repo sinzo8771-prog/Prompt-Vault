@@ -25,7 +25,9 @@ export function SaveButton({ prompt, size = "sm", className = "" }: SaveButtonPr
     if (stored) {
       try {
         const savedPrompts = JSON.parse(stored);
-        setSaved(savedPrompts.some((p: { id: string }) => p.id === prompt.id));
+        Promise.resolve().then(() =>
+          setSaved(savedPrompts.some((p: { id: string }) => p.id === prompt.id))
+        );
       } catch { /* ignore */ }
     }
   }, [prompt.id]);
