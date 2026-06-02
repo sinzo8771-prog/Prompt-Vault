@@ -1,13 +1,30 @@
 "use client";
 
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useMemo } from "react";
 import Link from "next/link";
-import { motion, useScroll, useTransform, useSpring } from "framer-motion";
+import { motion, useScroll, useTransform, useSpring, type MotionValue } from "framer-motion";
 import { Sparkles, Zap, Copy } from "lucide-react";
 import { SearchBar } from "./SearchBar";
 
 interface HeroProps {
   promptCount: number;
+}
+
+function FloatingElement({
+  scrollYProgress,
+  from,
+  to,
+  className,
+  style,
+}: {
+  scrollYProgress: MotionValue<number>;
+  from: number[];
+  to: number[];
+  className: string;
+  style?: React.CSSProperties;
+}) {
+  const y = useTransform(scrollYProgress, from, to);
+  return <motion.div style={{ y, ...style }} className={className} />;
 }
 
 export function Hero({ promptCount }: HeroProps) {
@@ -18,7 +35,7 @@ export function Hero({ promptCount }: HeroProps) {
   });
 
   // Smooth spring for mouse following
-  const springConfig = { damping: 25, stiffness: 150 };
+  const springConfig = useMemo(() => ({ damping: 25, stiffness: 150 }), []);
   const mouseX = useSpring(0, springConfig);
   const mouseY = useSpring(0, springConfig);
 
@@ -30,7 +47,6 @@ export function Hero({ promptCount }: HeroProps) {
       const y = (clientY / innerHeight - 0.5) * 20;
       mouseX.set(x);
       mouseY.set(y);
-
     };
 
     window.addEventListener("mousemove", handleMouseMove);
@@ -93,12 +109,16 @@ export function Hero({ promptCount }: HeroProps) {
       />
 
       {/* Floating decorative elements */}
-      <motion.div
-        style={{ y: useTransform(scrollYProgress, [0, 1], [0, -50]) }}
+      <FloatingElement
+        scrollYProgress={scrollYProgress}
+        from={[0, 1]}
+        to={[0, -50]}
         className="absolute top-32 right-20 w-20 h-20 rounded-2xl bg-gradient-to-br from-accent/20 to-accent/5 border border-accent/10 animate-float hidden lg:block"
       />
-      <motion.div
-        style={{ y: useTransform(scrollYProgress, [0, 1], [0, -30]) }}
+      <FloatingElement
+        scrollYProgress={scrollYProgress}
+        from={[0, 1]}
+        to={[0, -30]}
         className="absolute bottom-40 left-16 w-16 h-16 rounded-full bg-gradient-to-br from-secondary/20 to-secondary/5 border border-secondary/10 animate-float hidden lg:block"
       />
 
@@ -164,7 +184,7 @@ export function Hero({ promptCount }: HeroProps) {
 
           {/* Stats */}
           <motion.div variants={itemVariants}>
-            <div className="flex items-center gap-8">
+            <div className="flex flex-wrap items-center gap-6 sm:gap-8">
               {stats.map((stat) => (
                 <div key={stat.label} className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-xl bg-bg-card border border-border/50 flex items-center justify-center">

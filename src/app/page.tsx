@@ -9,7 +9,7 @@ import { PromptCard } from "@/components/PromptCard";
 import { CategoryCard } from "@/components/CategoryCard";
 import { ScrollReveal } from "@/components/ScrollReveal";
 import Link from "next/link";
-import { ArrowRight, Sparkles, Zap, Globe } from "lucide-react";
+import { ArrowRight, Sparkles, Zap, Globe, Heart } from "lucide-react";
 
 export const revalidate = 60;
 
@@ -198,6 +198,3 @@ export default async function HomePage() {
     </>
   );
 }
-
-// Need to import Heart
-import { Heart } from "lucide-react";
