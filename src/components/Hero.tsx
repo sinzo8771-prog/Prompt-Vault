@@ -15,16 +15,14 @@ function FloatingElement({
   from,
   to,
   className,
-  style,
 }: {
   scrollYProgress: MotionValue<number>;
   from: number[];
   to: number[];
   className: string;
-  style?: React.CSSProperties;
 }) {
   const y = useTransform(scrollYProgress, from, to);
-  return <motion.div style={{ y, ...style }} className={className} />;
+  return <motion.div style={{ y }} className={className} />;
 }
 
 export function Hero({ promptCount }: HeroProps) {
@@ -91,11 +89,11 @@ export function Hero({ promptCount }: HeroProps) {
       <div className="absolute inset-0 overflow-hidden">
         <motion.div
           style={{ x: mouseX, y: mouseY }}
-          className="absolute -top-1/4 -right-1/4 w-[800px] h-[800px] rounded-full bg-gradient-to-br from-accent/10 to-transparent blur-3xl"
+          className="absolute -top-1/4 -right-1/4 w-[600px] h-[600px] rounded-full bg-gradient-to-br from-accent/10 to-transparent blur-3xl"
         />
         <motion.div
           style={{ x: mouseX, y: mouseY }}
-          className="absolute -bottom-1/4 -left-1/4 w-[600px] h-[600px] rounded-full bg-gradient-to-tr from-secondary/10 to-transparent blur-3xl"
+          className="absolute -bottom-1/4 -left-1/4 w-[500px] h-[500px] rounded-full bg-gradient-to-tr from-secondary/10 to-transparent blur-3xl"
         />
       </div>
 
@@ -122,15 +120,15 @@ export function Hero({ promptCount }: HeroProps) {
         className="absolute bottom-40 left-16 w-16 h-16 rounded-full bg-gradient-to-br from-secondary/20 to-secondary/5 border border-secondary/10 animate-float hidden lg:block"
       />
 
-      <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-8 pt-32 pb-20">
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 sm:pt-32 pb-16 sm:pb-20">
         <motion.div
           variants={containerVariants}
           initial="hidden"
           animate="visible"
-          className="max-w-4xl"
+          className="max-w-4xl mx-auto text-center"
         >
           {/* Badge */}
-          <motion.div variants={itemVariants} className="mb-8">
+          <motion.div variants={itemVariants} className="mb-6 sm:mb-8">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent-dim border border-accent/20">
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75" />
@@ -143,30 +141,30 @@ export function Hero({ promptCount }: HeroProps) {
           </motion.div>
 
           {/* Main heading */}
-          <motion.div variants={itemVariants} className="mb-8">
-            <h1 className="display">
+          <motion.div variants={itemVariants} className="mb-6 sm:mb-8">
+            <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold tracking-tight leading-[0.95]">
               <span className="block text-text">AI prompts</span>
               <span className="block text-gradient-warm">that work.</span>
             </h1>
           </motion.div>
 
           {/* Subheading */}
-          <motion.div variants={itemVariants} className="mb-12">
-            <p className="body-lg max-w-xl">
+          <motion.div variants={itemVariants} className="mb-8 sm:mb-12">
+            <p className="text-base sm:text-lg md:text-xl text-text-secondary max-w-xl mx-auto leading-relaxed">
               No fluff. No listicles. Just battle-tested prompts for ChatGPT,
               Midjourney, Claude, and more.{" "}
-              <span className="text-text font-medium">Copy. Paste. Ship.</span>
+              <span className="text-text font-semibold">Copy. Paste. Ship.</span>
             </p>
           </motion.div>
 
           {/* Search */}
-          <motion.div variants={itemVariants} className="mb-8">
+          <motion.div variants={itemVariants} className="mb-6 sm:mb-8">
             <SearchBar />
           </motion.div>
 
           {/* Popular tags */}
-          <motion.div variants={itemVariants} className="mb-12">
-            <div className="flex flex-wrap items-center gap-2">
+          <motion.div variants={itemVariants} className="mb-8 sm:mb-12">
+            <div className="flex flex-wrap items-center justify-center gap-2">
               <span className="text-xs text-text-muted font-mono">Popular:</span>
               {["Blog Writer", "Code Review", "Cold Email", "SEO", "Midjourney"].map(
                 (term) => (
@@ -184,13 +182,13 @@ export function Hero({ promptCount }: HeroProps) {
 
           {/* Stats */}
           <motion.div variants={itemVariants}>
-            <div className="flex flex-wrap items-center gap-6 sm:gap-8">
+            <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-8">
               {stats.map((stat) => (
                 <div key={stat.label} className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-xl bg-bg-card border border-border/50 flex items-center justify-center">
                     <stat.icon className="w-4 h-4 text-accent" />
                   </div>
-                  <div>
+                  <div className="text-left">
                     <p className="text-lg font-bold text-text">{stat.value}</p>
                     <p className="text-xs font-mono text-text-muted uppercase tracking-wider">
                       {stat.label}
@@ -208,7 +206,7 @@ export function Hero({ promptCount }: HeroProps) {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1.5 }}
-        className="absolute bottom-10 left-1/2 -translate-x-1/2"
+        className="absolute bottom-8 left-1/2 -translate-x-1/2"
       >
         <motion.div
           animate={{ y: [0, 10, 0] }}
