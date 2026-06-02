@@ -19,7 +19,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
     <div className="max-w-7xl mx-auto px-6 lg:px-8 py-24 pt-32">
       <ScrollReveal>
         <div className="mb-10">
-          <h1 className="text-3xl md:text-4xl font-bold text-text mb-6 tracking-tight">
+          <h1 className="display-2 mb-6">
             {query ? (
               <>Results for &quot;<span className="text-accent">{query}</span>&quot;</>
             ) : (
@@ -52,8 +52,8 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
             <p className="text-text-muted font-mono text-sm mb-3">
               {query ? `No results for "${query}"` : "Type above to search"}
             </p>
-            <NextLink href="/category/writing" className="text-xs font-mono text-accent hover:text-accent-hover transition-colors">
-              Browse categories →
+            <NextLink href="/category/writing" className="btn-ghost text-xs">
+              Browse categories
             </NextLink>
           </div>
         </ScrollReveal>

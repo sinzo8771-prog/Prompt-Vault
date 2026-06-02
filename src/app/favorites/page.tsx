@@ -1,10 +1,12 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import { getAllPrompts } from "@/lib/prompts";
-import { Prompt } from "@/lib/prompts";
+import { PromptCard } from "@/components/PromptCard";
+import { ScrollReveal } from "@/components/ScrollReveal";
+import { Heart } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Favorites - PromptVault",
+  title: "Favorites — PromptVault",
   description: "View your favorite prompts.",
 };
 
@@ -14,75 +16,44 @@ export default async function FavoritesPage() {
   const favoritePrompts = allPrompts.filter((p) => favoriteIds.includes(p.id));
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-gray-100">
-      <div className="max-w-7xl mx-auto px-6 py-24">
+    <div className="max-w-7xl mx-auto px-6 lg:px-8 py-24 pt-32">
+      <ScrollReveal>
         <div className="mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-pink-400 to-purple-500 bg-clip-text text-transparent mb-4">
-            Your Favorites
+          <p className="label mb-3">Favorites</p>
+          <h1 className="display-2 mb-4">
+            Your <span className="text-accent">favorites</span>
           </h1>
-          <p className="text-gray-400 text-lg max-w-2xl">
+          <p className="body-lg max-w-2xl">
             Quick access to the prompts you&apos;ve saved for later.
           </p>
         </div>
+      </ScrollReveal>
 
-        {favoritePrompts.length > 0 ? (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {favoritePrompts.map((prompt: Prompt, index: number) => (
-              <div
-                key={prompt.id}
-                className="group relative bg-neutral-900/50 backdrop-blur-sm rounded-2xl p-6 border border-white/5 hover:border-white/20 transition-all duration-300 hover:shadow-[0_0_40px_rgba(236,72,153,0.15)]"
-                style={{
-                  animation: `fadeInUp 0.5s ease-out ${index * 0.05}s both`,
-                }}
-              >
-                <div className="flex items-start justify-between gap-3 mb-4">
-                  <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    {prompt.category}
-                  </span>
-                  <div className="flex items-center gap-1 text-pink-400 text-sm">
-                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
-                    </svg>
-                    {prompt.copyCount}
-                  </div>
-                </div>
-                <Link href={`/prompt/${prompt.id}`}>
-                  <h3 className="text-xl font-semibold text-gray-100 group-hover:text-pink-400 transition-colors mb-2">
-                    {prompt.title}
-                  </h3>
-                </Link>
-                <p className="text-gray-400 text-sm mb-4 line-clamp-2">
-                  {prompt.body}
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {prompt.tags.slice(0, 3).map((tag: string) => (
-                    <span
-                      key={tag}
-                      className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-pink-500/10 text-pink-400 border border-pink-500/20"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-20">
-            <svg className="w-16 h-16 mx-auto text-gray-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
-            </svg>
-            <h3 className="text-xl font-medium text-gray-300 mb-2">No favorites yet</h3>
-            <p className="text-gray-500 mb-6">Start saving prompts you love and they&apos;ll appear here.</p>
+      {favoritePrompts.length > 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {favoritePrompts.map((prompt, i) => (
+            <ScrollReveal key={prompt.id} delay={i * 40}>
+              <PromptCard prompt={prompt} index={i} />
+            </ScrollReveal>
+          ))}
+        </div>
+      ) : (
+        <ScrollReveal>
+          <div className="text-center py-20 border border-border/50 rounded-xl bg-bg-card">
+            <Heart className="w-12 h-12 mx-auto text-text-muted/30 mb-4" />
+            <h3 className="text-lg font-semibold text-text mb-2">No favorites yet</h3>
+            <p className="text-sm text-text-muted mb-6 max-w-sm mx-auto">
+              Start saving prompts you love and they&apos;ll appear here.
+            </p>
             <Link
               href="/"
-              className="inline-block px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl font-semibold hover:from-blue-500 hover:to-purple-500 transition-all duration-300"
+              className="btn-primary"
             >
               Browse Prompts
             </Link>
           </div>
-        )}
-      </div>
+        </ScrollReveal>
+      )}
     </div>
   );
 }

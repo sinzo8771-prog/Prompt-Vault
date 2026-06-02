@@ -1,16 +1,20 @@
 import Link from "next/link";
 
+const interClass = "__variable_inter";
+
 export default function NotFound() {
   return (
-    <div className="flex-1 flex items-center justify-center py-32">
-      <div className="text-center">
-        <p className="text-8xl font-bold text-text-muted/20 mb-4">404</p>
-        <h1 className="text-2xl font-bold text-text mb-3">Page not found</h1>
-        <p className="text-text-muted mb-8 max-w-md mx-auto">
+    <div className="flex-1 flex items-center justify-center py-32 px-6">
+      <div className="text-center max-w-md">
+        <p className="label mb-4">Error 404</p>
+        <h1 className="display-2 mb-6">
+          Page not <span className="text-accent">found</span>
+        </h1>
+        <p className="body-lg text-text-secondary mb-10">
           The page you&apos;re looking for doesn&apos;t exist or has been moved.
         </p>
-        <Link href="/" className="btn-magnetic">
-          <span>Go Home →</span>
+        <Link href="/" className="btn-primary">
+          Go Home
         </Link>
       </div>
     </div>

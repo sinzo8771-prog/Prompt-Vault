@@ -64,7 +64,7 @@ export default async function PromptDetailPage({ params }: { params: Promise<{ s
         {/* Header */}
         <ScrollReveal delay={50}>
           <div className="mb-10">
-            <h1 className="text-3xl md:text-5xl font-bold text-text leading-tight tracking-tight mb-5">
+            <h1 className="display-2 mb-5">
               {prompt.title}
             </h1>
             <div className="flex flex-wrap items-center gap-3 mb-4">

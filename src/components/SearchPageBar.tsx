@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Search } from "lucide-react";
 
@@ -12,11 +12,11 @@ export function SearchPageBar({ defaultValue = "" }: SearchPageBarProps) {
   const [query, setQuery] = useState(defaultValue);
   const router = useRouter();
 
-  Promise.resolve().then(() => {
+  useEffect(() => {
     if (query !== defaultValue) {
       setQuery(defaultValue);
     }
-  });
+  }, [defaultValue, query]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

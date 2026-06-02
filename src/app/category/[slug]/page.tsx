@@ -38,7 +38,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
               {category.icon}
             </div>
             <div>
-              <h1 className="text-3xl md:text-4xl font-bold text-text tracking-tight">
+              <h1 className="display-2">
                 {category.name}
               </h1>
               <p className="text-sm font-mono text-text-muted mt-1">
