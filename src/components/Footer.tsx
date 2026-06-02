@@ -30,31 +30,33 @@ export function Footer() {
       {/* Top accent line */}
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent/50 to-transparent" />
 
-      <div className="max-w-7xl mx-auto px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Main footer content */}
-        <div className="py-16 grid grid-cols-2 md:grid-cols-4 gap-10">
+        <div className="py-12 sm:py-16 grid grid-cols-2 md:grid-cols-4 gap-8 sm:gap-10">
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
-            <Link href="/" className="flex items-center gap-3 mb-6">
-              <AnimatedLogo size={32} />
+            <Link href="/" className="flex items-center gap-2.5 mb-5">
+              <AnimatedLogo size={28} />
               <span className="text-lg font-bold tracking-tight text-text">
                 Prompt<span className="text-accent">Vault</span>
               </span>
             </Link>
-            <p className="text-sm text-text-muted mb-6 max-w-xs">
+            <p className="text-sm text-text-muted mb-5 max-w-xs leading-relaxed">
               Battle-tested AI prompts for developers, marketers, and creators. No
               fluff, just results.
             </p>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
               <a
                 href="#"
-                className="w-10 h-10 rounded-xl bg-bg-card border border-border/50 flex items-center justify-center text-text-muted hover:text-accent hover:border-accent/30 transition-all"
+                className="w-9 h-9 rounded-lg bg-bg-card border border-border/50 flex items-center justify-center text-text-muted hover:text-accent hover:border-accent/30 transition-all"
+                aria-label="Contact us"
               >
                 <MessageCircle className="w-4 h-4" />
               </a>
               <a
                 href="#"
-                className="w-10 h-10 rounded-xl bg-bg-card border border-border/50 flex items-center justify-center text-text-muted hover:text-accent hover:border-accent/30 transition-all"
+                className="w-9 h-9 rounded-lg bg-bg-card border border-border/50 flex items-center justify-center text-text-muted hover:text-accent hover:border-accent/30 transition-all"
+                aria-label="External links"
               >
                 <ExternalLink className="w-4 h-4" />
               </a>
@@ -67,7 +69,7 @@ export function Footer() {
               <h4 className="text-xs font-mono font-medium text-text-muted uppercase tracking-wider mb-4">
                 {category}
               </h4>
-              <ul className="space-y-3">
+              <ul className="space-y-2.5">
                 {links.map((link) => (
                   <li key={link.label}>
                     <Link
@@ -85,12 +87,12 @@ export function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div className="py-6 border-t border-border/30">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="py-5 border-t border-border/30">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
             <p className="text-xs text-text-muted">
               © {new Date().getFullYear()} PromptVault. All rights reserved.
             </p>
-            <p className="text-xs text-text-muted flex items-center gap-1">
+            <p className="text-xs text-text-muted flex items-center gap-1.5">
               Built with <Heart className="w-3 h-3 text-accent" /> for the AI
               community
             </p>

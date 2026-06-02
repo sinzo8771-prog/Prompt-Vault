@@ -27,16 +27,16 @@ export default async function HomePage() {
       <Hero promptCount={allPrompts.length} />
 
       {/* ═══ MARQUEE — AI Tools ═══ */}
-      <section className="py-8 border-y border-border/30 bg-bg-elevated/50 overflow-hidden">
+      <section className="py-6 sm:py-8 border-y border-border/30 bg-bg-elevated/50 overflow-hidden">
         <div className="marquee">
           <div className="marquee-track" style={{ "--marquee-speed": "25s" } as React.CSSProperties}>
             {[...Array(2)].map((_, i) => (
-              <div key={i} className="flex items-center gap-8 px-4">
+              <div key={i} className="flex items-center gap-6 sm:gap-8 px-4">
                 {["ChatGPT", "Claude", "Midjourney", "Gemini", "Copilot", "DeepSeek", "Llama", "Grok"].map(
                   (tool) => (
                     <span
                       key={`${i}-${tool}`}
-                      className="text-sm font-mono text-text-muted/50 whitespace-nowrap flex items-center gap-2"
+                      className="text-xs sm:text-sm font-mono text-text-muted/50 whitespace-nowrap flex items-center gap-2"
                     >
                       <span className="w-1.5 h-1.5 rounded-full bg-accent/30" />
                       {tool}
@@ -51,11 +51,11 @@ export default async function HomePage() {
 
       {/* ═══ CATEGORIES ═══ */}
       <section className="section">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
+        <div className="container">
           <ScrollReveal>
-            <div className="flex items-end justify-between mb-12">
+            <div className="flex items-end justify-between mb-10 sm:mb-12">
               <div>
-                <p className="label mb-3">01 / Categories</p>
+                <p className="label mb-2 sm:mb-3">01 / Categories</p>
                 <h2 className="heading-xl">Browse by use case</h2>
               </div>
               <Link
@@ -68,7 +68,7 @@ export default async function HomePage() {
             </div>
           </ScrollReveal>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
             {categories.slice(0, 6).map((cat, i) => (
               <CategoryCard key={cat.slug} category={cat} index={i} />
             ))}
@@ -78,11 +78,11 @@ export default async function HomePage() {
 
       {/* ═══ FEATURED ═══ */}
       <section className="section bg-bg-elevated/30">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
+        <div className="container">
           <ScrollReveal>
-            <div className="flex items-end justify-between mb-12">
+            <div className="flex items-end justify-between mb-10 sm:mb-12">
               <div>
-                <p className="label mb-3">02 / Featured</p>
+                <p className="label mb-2 sm:mb-3">02 / Featured</p>
                 <h2 className="heading-xl">Hand-picked prompts</h2>
               </div>
               <Link
@@ -95,7 +95,7 @@ export default async function HomePage() {
             </div>
           </ScrollReveal>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
             {featured.map((prompt, i) => (
               <PromptCard key={prompt.id} prompt={prompt} index={i} />
             ))}
@@ -105,22 +105,22 @@ export default async function HomePage() {
 
       {/* ═══ TRENDING ═══ */}
       <section className="section">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
+        <div className="container">
           <ScrollReveal>
-            <div className="mb-12">
-              <p className="label mb-3">03 / Trending</p>
+            <div className="mb-10 sm:mb-12">
+              <p className="label mb-2 sm:mb-3">03 / Trending</p>
               <h2 className="heading-xl">Most copied this week</h2>
             </div>
           </ScrollReveal>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 sm:gap-3">
             {trending.map((prompt, i) => (
               <ScrollReveal key={prompt.id} delay={i * 40}>
                 <Link
                   href={`/prompt/${prompt.slug}`}
-                  className="flex items-center gap-4 p-5 bg-bg-card border border-border/50 rounded-xl hover:border-accent/30 transition-all duration-300 group"
+                  className="flex items-center gap-3 sm:gap-4 p-4 sm:p-5 bg-bg-card border border-border/50 rounded-xl hover:border-accent/30 transition-all duration-300 group"
                 >
-                  <span className="text-2xl font-bold font-mono text-text-muted/20 w-8 text-center shrink-0 group-hover:text-accent/40 transition-colors">
+                  <span className="text-xl sm:text-2xl font-bold font-mono text-text-muted/20 w-7 sm:w-8 text-center shrink-0 group-hover:text-accent/40 transition-colors">
                     {String(i + 1).padStart(2, "0")}
                   </span>
                   <div className="flex-1 min-w-0">
@@ -144,9 +144,9 @@ export default async function HomePage() {
       </section>
 
       {/* ═══ STATS ═══ */}
-      <section className="section bg-bg-elevated/30 border-y border-border/30">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+      <section className="section-sm bg-bg-elevated/30 border-y border-border/30">
+        <div className="container">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8">
             {[
               { icon: Sparkles, value: allPrompts.length + "+", label: "Prompts" },
               { icon: Zap, value: categories.length.toString(), label: "Categories" },
@@ -155,11 +155,11 @@ export default async function HomePage() {
             ].map((stat) => (
               <ScrollReveal key={stat.label}>
                 <div className="text-center group">
-                  <div className="w-12 h-12 mx-auto mb-4 rounded-2xl bg-bg-card border border-border/50 flex items-center justify-center group-hover:border-accent/30 transition-colors">
-                    <stat.icon className="w-5 h-5 text-accent" />
+                  <div className="w-10 sm:w-12 h-10 sm:h-12 mx-auto mb-3 sm:mb-4 rounded-xl sm:rounded-2xl bg-bg-card border border-border/50 flex items-center justify-center group-hover:border-accent/30 transition-colors">
+                    <stat.icon className="w-4 sm:w-5 h-4 sm:h-5 text-accent" />
                   </div>
-                  <p className="text-3xl font-bold text-text">{stat.value}</p>
-                  <p className="text-xs font-mono text-text-muted uppercase tracking-wider mt-2">
+                  <p className="text-2xl sm:text-3xl font-bold text-text">{stat.value}</p>
+                  <p className="text-[10px] sm:text-xs font-mono text-text-muted uppercase tracking-wider mt-1.5 sm:mt-2">
                     {stat.label}
                   </p>
                 </div>
@@ -171,28 +171,30 @@ export default async function HomePage() {
 
       {/* ═══ CTA ═══ */}
       <section className="section">
-        <div className="max-w-4xl mx-auto px-6 lg:px-8 text-center">
-          <ScrollReveal>
-            <p className="label mb-4">Ready?</p>
-            <h2 className="display-2 mb-6">
-              Stop prompting.
-              <br />
-              <span className="text-gradient-warm">Start shipping.</span>
-            </h2>
-            <p className="body-lg max-w-lg mx-auto mb-10">
-              Join thousands of developers, marketers, and creators who use
-              PromptVault to get better results from AI tools.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/category/writing" className="btn-primary">
-                Browse Prompts
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-              <Link href="/generator" className="btn-ghost">
-                Try Generator
-              </Link>
-            </div>
-          </ScrollReveal>
+        <div className="container">
+          <div className="max-w-3xl mx-auto text-center">
+            <ScrollReveal>
+              <p className="label mb-4">Ready?</p>
+              <h2 className="display-2 mb-6">
+                Stop prompting.
+                <br />
+                <span className="text-gradient-warm">Start shipping.</span>
+              </h2>
+              <p className="body-lg max-w-lg mx-auto mb-10">
+                Join thousands of developers, marketers, and creators who use
+                PromptVault to get better results from AI tools.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Link href="/category/writing" className="btn-primary">
+                  Browse Prompts
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+                <Link href="/generator" className="btn-ghost">
+                  Try Generator
+                </Link>
+              </div>
+            </ScrollReveal>
+          </div>
         </div>
       </section>
     </>
