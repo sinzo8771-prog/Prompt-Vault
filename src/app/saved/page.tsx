@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 };
 
 export default async function SavedPage() {
-  const savedIds = ["1", "4", "7"];
+  const savedIds = ["c4", "m4", "co4"];
   const allPrompts = await getAllPrompts();
   const savedPrompts = allPrompts.filter((p) => savedIds.includes(p.id));
 

@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 };
 
 export default async function FavoritesPage() {
-  const favoriteIds = ["1", "2", "3"];
+  const favoriteIds = ["c1", "m1", "co1"];
   const allPrompts = await getAllPrompts();
   const favoritePrompts = allPrompts.filter((p) => favoriteIds.includes(p.id));
 

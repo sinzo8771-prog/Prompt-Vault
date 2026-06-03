@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { categories } from "@/data/prompts";
 import { ScrollReveal } from "@/components/ScrollReveal";
-import { Send, ArrowLeft, Loader2, CheckCircle2 } from "lucide-react";
+import { Send, Loader2, CheckCircle2 } from "lucide-react";
 
 export default function SubmitPage() {
   const [status, setStatus] = useState<string | null>(null);

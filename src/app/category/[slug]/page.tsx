@@ -15,15 +15,12 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const categories = await getCategories();
   const category = categories.find((c) => c.slug === slug);
   if (!category) return {};
-  if (!category) notFound();
   return { title: category.name + " Prompts", description: category.description };
 }
 
 export default async function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const [categories] = await Promise.all([
-    getCategories(),
-  ]);
+  const categories = await getCategories();
   const category = categories.find((c) => c.slug === slug);
   if (!category) notFound();
   const categoryPrompts = await getPromptsByCategory(slug);

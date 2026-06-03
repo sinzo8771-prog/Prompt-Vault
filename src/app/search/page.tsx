@@ -26,7 +26,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
               <>Search <span className="text-accent">prompts</span></>
             )}
           </h1>
-          <SearchPageBar defaultValue={query || ""} />
+          <SearchPageBar key={query || ""} defaultValue={query || ""} />
         </div>
       </ScrollReveal>
 

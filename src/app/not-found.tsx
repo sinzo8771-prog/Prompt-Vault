@@ -1,7 +1,5 @@
 import Link from "next/link";
 
-const interClass = "__variable_inter";
-
 export default function NotFound() {
   return (
     <div className="flex-1 flex items-center justify-center py-32 px-6">

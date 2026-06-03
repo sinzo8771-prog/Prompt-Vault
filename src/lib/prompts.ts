@@ -222,7 +222,18 @@ export async function searchPrompts(query: string): Promise<Prompt[]> {
 }
 
 export async function getCategories(): Promise<Category[]> {
-  if (!hasNotion) return localCategories as Category[];
+  if (!hasNotion) {
+    // Compute real prompt counts from local data
+    const counts: Record<string, number> = {};
+    for (const p of localPrompts) {
+      const c = p.category.toLowerCase();
+      counts[c] = (counts[c] || 0) + 1;
+    }
+    return (localCategories as Category[]).map((cat) => ({
+      ...cat,
+      promptCount: counts[cat.slug] || 0,
+    }));
+  }
 
   try {
     const prompts = await getAllPrompts();
