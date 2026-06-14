@@ -78,16 +78,27 @@ const DATA_SOURCE_ID = process.env.NOTION_DATA_SOURCE_ID || "";
 type NotionQueryFilter = Record<string, unknown>;
 type NotionQuerySort = { property: string; direction: "ascending" | "descending" } | { timestamp: "created_time" | "last_edited_time"; direction: "ascending" | "descending" };
 
-async function queryDataSource(filter?: NotionQueryFilter, sorts?: NotionQuerySort[]): Promise<{ id: string; created_time: string; properties: NotionProperties }[]> {
+async function queryDataSource(
+  filter?: NotionQueryFilter,
+  sorts?: NotionQuerySort[],
+): Promise<{ id: string; created_time: string; properties: NotionProperties }[]> {
   if (!notion || !DATA_SOURCE_ID) return [];
   const allResults: { id: string; created_time: string; properties: NotionProperties }[] = [];
   let startCursor: string | undefined;
   let hasMore = true;
 
-  while (hasMore) {
+  // During `next build`, external requests can be noisy and slow. Keep it small and fail fast.
+  const buildCapPages = process.env.NEXT_PHASE === "phase-production-build" ? 1 : 0;
+  const effectiveMaxPages = buildCapPages ? buildCapPages : Number.POSITIVE_INFINITY;
+  const effectivePageSize = buildCapPages ? 20 : 100;
+
+  let pageCount = 0;
+
+  while (hasMore && pageCount < effectiveMaxPages) {
+    pageCount++;
     const params: Record<string, unknown> = {
       data_source_id: DATA_SOURCE_ID,
-      page_size: 100,
+      page_size: effectivePageSize,
     };
     if (filter) params.filter = filter;
     if (sorts) params.sorts = sorts;
