@@ -5,79 +5,73 @@ import { ExternalLink, Heart, ArrowUpRight, MessageCircle } from "lucide-react";
 import { AnimatedLogo } from "./AnimatedLogo";
 
 const LINKS = {
-  product: [
-    { href: "/category/writing", label: "Browse Prompts" },
-    { href: "/generator", label: "AI Generator" },
-    { href: "/search", label: "Search" },
+  Platform: [
+    { href: "/search", label: "Prompt Search" },
     { href: "/submit", label: "Submit Prompt" },
+    { href: "/generator", label: "API Generator" },
   ],
-  resources: [
+  Resources: [
+    { href: "/about", label: "Engineering Guide" },
+    { href: "/privacy", label: "Privacy Policy" },
+    { href: "/terms", label: "Terms of Use" },
+  ],
+  Company: [
     { href: "/about", label: "About" },
-    { href: "/privacy", label: "Privacy" },
-    { href: "/terms", label: "Terms" },
-  ],
-  tools: [
-    { label: "ChatGPT", href: "#" },
-    { label: "Claude", href: "#" },
-    { label: "Midjourney", href: "#" },
-    { label: "Gemini", href: "#" },
+    { href: "#", label: "Careers" },
+    { href: "#", label: "Contact" },
   ],
 };
 
 export function Footer() {
   return (
-    <footer className="relative border-t border-border/30 bg-bg-elevated">
-      {/* Top accent line */}
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent/50 to-transparent" />
+    <footer className="bg-[var(--color-surface-dark)] text-white/40 py-20 px-12 border-t border-white/5 relative overflow-hidden">
+      {/* Cinematic subtle glow / reflection */}
+      <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-bl from-[#7C9AD3]/5 to-transparent pointer-events-none" />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Main footer content */}
-        <div className="py-12 sm:py-16 grid grid-cols-2 md:grid-cols-4 gap-8 sm:gap-10">
-          {/* Brand */}
-          <div className="col-span-2 md:col-span-1">
-            <Link href="/" className="flex items-center gap-2.5 mb-5">
+      <div className="max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-16 mb-20">
+          <div className="md:col-span-1">
+            <Link href="/" className="flex items-center gap-2.5 mb-8">
               <AnimatedLogo size={28} />
-              <span className="text-lg font-bold tracking-tight text-text">
-                Prompt<span className="text-accent">Vault</span>
+              <span className="text-white text-3xl font-bold tracking-tighter">
+                PromptVault.
               </span>
             </Link>
-            <p className="text-sm text-text-muted mb-5 max-w-xs leading-relaxed">
-              Battle-tested AI prompts for developers, marketers, and creators. No
-              fluff, just results.
+            <p className="text-sm leading-relaxed max-w-xs mb-8 text-white/60">
+              The definitive library for the age of synthetic reasoning. Engineered for clarity, optimized for output. No fluff, just results.
             </p>
-            <div className="flex items-center gap-2">
+            <div className="flex gap-4">
               <a
                 href="#"
-                className="w-9 h-9 rounded-lg bg-bg-card border border-border/50 flex items-center justify-center text-text-muted hover:text-accent hover:border-accent/30 transition-all"
-                aria-label="Contact us"
+                className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-white/60 hover:bg-white/10 hover:text-white transition-all transition-standard"
+                aria-label="Twitter"
               >
-                <MessageCircle className="w-4 h-4" />
+                <MessageCircle className="w-5 h-5" />
               </a>
               <a
                 href="#"
-                className="w-9 h-9 rounded-lg bg-bg-card border border-border/50 flex items-center justify-center text-text-muted hover:text-accent hover:border-accent/30 transition-all"
-                aria-label="External links"
+                className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-white/60 hover:bg-white/10 hover:text-white transition-all transition-standard"
+                aria-label="GitHub"
               >
-                <ExternalLink className="w-4 h-4" />
+                <ExternalLink className="w-5 h-5" />
               </a>
             </div>
           </div>
 
-          {/* Links */}
           {Object.entries(LINKS).map(([category, links]) => (
             <div key={category}>
-              <h4 className="text-xs font-mono font-medium text-text-muted uppercase tracking-wider mb-4">
+              <h5 className="text-white text-xs font-bold uppercase tracking-widest mb-8">
                 {category}
-              </h4>
-              <ul className="space-y-2.5">
+              </h5>
+              <ul className="space-y-4 text-sm font-medium">
                 {links.map((link) => (
                   <li key={link.label}>
                     <Link
                       href={link.href}
-                      className="text-sm text-text-secondary hover:text-accent transition-colors inline-flex items-center gap-1 group"
+                      className="hover:text-white transition-colors transition-standard flex items-center gap-1 group"
                     >
                       {link.label}
-                      <ArrowUpRight className="w-3 h-3 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
+                      <ArrowUpRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity" />
                     </Link>
                   </li>
                 ))}
@@ -86,16 +80,13 @@ export function Footer() {
           ))}
         </div>
 
-        {/* Bottom bar */}
-        <div className="py-5 border-t border-border/30">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
-            <p className="text-xs text-text-muted">
-              © {new Date().getFullYear()} PromptVault. All rights reserved.
-            </p>
-            <p className="text-xs text-text-muted flex items-center gap-1.5">
-              Built with <Heart className="w-3 h-3 text-accent" /> for the AI
-              community
-            </p>
+        <div className="pt-10 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6">
+          <div className="text-xs font-mono">
+            © {new Date().getFullYear()} PROMPTVAULT. ALL RIGHTS RESERVED.
+          </div>
+          <div className="flex gap-8 text-xs font-mono">
+            <span>LATENCY: 14MS</span>
+            <span className="text-emerald-500">STATUS: ALL SYSTEMS NOMINAL</span>
           </div>
         </div>
       </div>

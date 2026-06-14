@@ -1,28 +1,13 @@
 "use client";
 
-import { useRef, useEffect, useMemo } from "react";
+import { useRef, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { motion, useScroll, useTransform, useSpring, type MotionValue } from "framer-motion";
-import { Sparkles, Zap, Copy } from "lucide-react";
+import { Sparkles, Search } from "lucide-react";
 import { SearchBar } from "./SearchBar";
 
 interface HeroProps {
   promptCount: number;
-}
-
-function FloatingElement({
-  scrollYProgress,
-  from,
-  to,
-  className,
-}: {
-  scrollYProgress: MotionValue<number>;
-  from: number[];
-  to: number[];
-  className: string;
-}) {
-  const y = useTransform(scrollYProgress, from, to);
-  return <motion.div style={{ y }} className={className} />;
 }
 
 export function Hero({ promptCount }: HeroProps) {
@@ -51,170 +36,116 @@ export function Hero({ promptCount }: HeroProps) {
     return () => window.removeEventListener("mousemove", handleMouseMove);
   }, [mouseX, mouseY]);
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.2,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 30 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.8,
-        ease: [0.25, 0.4, 0.25, 1] as [number, number, number, number],
-      },
-    },
-  };
-
-  const stats = [
-    { icon: Sparkles, value: `${promptCount}+`, label: "Prompts" },
-    { icon: Zap, value: "8+", label: "AI Tools" },
-    { icon: Copy, value: "Free", label: "Forever" },
-  ];
+  // Scroll depth transformations for 3D parallax on mockups
+  const yFloating1 = useTransform(scrollYProgress, [0, 1], [0, -100]);
+  const yFloating2 = useTransform(scrollYProgress, [0, 1], [0, -60]);
+  const opacityFloating = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
 
   return (
     <section
       ref={containerRef}
-      className="relative min-h-screen flex items-center"
+      className="relative min-h-[820px] bg-[var(--color-surface-dark)] overflow-hidden flex flex-col items-center justify-center px-6 pt-32 pb-24"
     >
-      {/* Background gradient orbs */}
-      <div className="absolute inset-0 overflow-hidden">
+      {/* Background gradients */}
+      <div className="absolute inset-0 bg-gradient-to-b from-[#7C9AD3]/10 via-[#314682]/20 to-transparent pointer-events-none" />
+      <div className="absolute inset-0 opacity-40 bg-[radial-gradient(circle_at_50%_50%,rgba(113,76,182,0.15),transparent_70%)] pointer-events-none" />
+
+      {/* Decorative Orbs */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <motion.div
           style={{ x: mouseX, y: mouseY }}
-          className="absolute -top-1/4 -right-1/4 w-[600px] h-[600px] rounded-full bg-gradient-to-br from-accent/10 to-transparent blur-3xl"
-        />
-        <motion.div
-          style={{ x: mouseX, y: mouseY }}
-          className="absolute -bottom-1/4 -left-1/4 w-[500px] h-[500px] rounded-full bg-gradient-to-tr from-secondary/10 to-transparent blur-3xl"
+          className="absolute -top-1/4 -right-1/4 w-[600px] h-[600px] rounded-full bg-gradient-to-br from-[var(--color-primary)]/10 to-transparent blur-3xl"
         />
       </div>
 
-      {/* Grid background */}
-      <div
-        className="absolute inset-0 opacity-[0.02]"
-        style={{
-          backgroundImage: `linear-gradient(var(--color-border) 1px, transparent 1px), linear-gradient(90deg, var(--color-border) 1px, transparent 1px)`,
-          backgroundSize: "80px 80px",
-        }}
-      />
-
-      {/* Floating decorative elements */}
-      <FloatingElement
-        scrollYProgress={scrollYProgress}
-        from={[0, 1]}
-        to={[0, -50]}
-        className="absolute top-32 right-20 w-20 h-20 rounded-2xl bg-gradient-to-br from-accent/20 to-accent/5 border border-accent/10 animate-float hidden lg:block"
-      />
-      <FloatingElement
-        scrollYProgress={scrollYProgress}
-        from={[0, 1]}
-        to={[0, -30]}
-        className="absolute bottom-40 left-16 w-16 h-16 rounded-full bg-gradient-to-br from-secondary/20 to-secondary/5 border border-secondary/10 animate-float hidden lg:block"
-      />
-
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 sm:pt-32 pb-16 sm:pb-20">
+      <div className="relative z-10 text-center max-w-4xl mx-auto flex flex-col items-center">
+        {/* Badge */}
         <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-          className="max-w-4xl mx-auto text-center"
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="inline-flex items-center gap-2 mb-8 px-4 py-1.5 rounded-full bg-white/5 border border-white/10"
         >
-          {/* Badge */}
-          <motion.div variants={itemVariants} className="mb-6 sm:mb-8">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent-dim border border-accent/20">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-accent" />
-              </span>
-              <span className="text-xs font-mono font-medium text-accent">
-                {promptCount}+ battle-tested prompts
-              </span>
-            </div>
-          </motion.div>
+          <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-primary)] animate-pulse" />
+          <span className="text-white/60 text-[10px] font-bold uppercase tracking-[0.2em]">
+            Redesign 2.0: Deep Twilight Phase
+          </span>
+        </motion.div>
 
-          {/* Main heading */}
-          <motion.div variants={itemVariants} className="mb-6 sm:mb-8">
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight leading-tight">
-              <span className="block text-text">AI prompts</span>
-              <span className="block text-gradient-warm">that work.</span>
-            </h1>
-          </motion.div>
+        {/* Main Heading */}
+        <motion.h1
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.1 }}
+          className="text-white text-4xl sm:text-5xl md:text-7xl font-semibold tracking-tighter leading-none mb-12"
+        >
+          The Oracle of<br />Synthetic Logic
+        </motion.h1>
 
-          {/* Subheading */}
-          <motion.div variants={itemVariants} className="mb-8 sm:mb-12">
-            <p className="text-base sm:text-lg md:text-xl text-text-secondary max-w-xl mx-auto leading-relaxed">
-              No fluff. No listicles. Just battle-tested prompts for ChatGPT,
-              Midjourney, Claude, and more.{" "}
-              <span className="text-text font-semibold">Copy. Paste. Ship.</span>
-            </p>
-          </motion.div>
-
-          {/* Search */}
-          <motion.div variants={itemVariants} className="mb-6 sm:mb-8">
+        {/* Oracle Search Bar Container */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          className="relative w-full max-w-3xl mx-auto group"
+        >
+          <div className="absolute -inset-1 bg-gradient-to-r from-[var(--color-primary)] to-[#7C9AD3] rounded-2xl blur-2xl opacity-10 group-focus-within:opacity-30 transition-all duration-300" />
+          <div className="relative bg-white/5 backdrop-blur-3xl border border-white/10 rounded-2xl p-1 flex items-center oracle-glow transition-all duration-300 group-focus-within:border-white/20">
             <SearchBar />
-          </motion.div>
+          </div>
 
-          {/* Popular tags */}
-          <motion.div variants={itemVariants} className="mb-8 sm:mb-12">
-            <div className="flex flex-wrap items-center justify-center gap-2">
-              <span className="text-xs text-text-muted font-mono">Popular:</span>
-              {["Blog Writer", "Code Review", "Cold Email", "SEO", "Midjourney"].map(
-                (term) => (
-                  <Link
-                    key={term}
-                    href={`/search?q=${encodeURIComponent(term)}`}
-                    className="text-xs font-mono text-text-muted px-3 py-1.5 border border-border/50 rounded-full hover:border-accent/30 hover:text-accent hover:bg-accent-dim transition-all duration-300"
-                  >
-                    {term}
-                  </Link>
-                )
-              )}
-            </div>
-          </motion.div>
-
-          {/* Stats */}
-          <motion.div variants={itemVariants}>
-            <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-8">
-              {stats.map((stat) => (
-                <div key={stat.label} className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-bg-card border border-border/50 flex items-center justify-center">
-                    <stat.icon className="w-4 h-4 text-accent" />
-                  </div>
-                  <div className="text-left">
-                    <p className="text-lg font-bold text-text">{stat.value}</p>
-                    <p className="text-xs font-mono text-text-muted uppercase tracking-wider">
-                      {stat.label}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </motion.div>
+          {/* Prompt Inspiration Prompts */}
+          <div className="mt-10 flex flex-wrap gap-4 sm:gap-6 justify-center items-center">
+            <span className="text-white/25 text-xs font-medium uppercase tracking-widest pt-0.5">
+              Inspiration:
+            </span>
+            {["Technical Documentation", "Creative Narratives", "Persona Synthesis"].map((suggestion) => (
+              <Link
+                key={suggestion}
+                href={`/search?q=${encodeURIComponent(suggestion)}`}
+                className="text-white/60 hover:text-[var(--color-primary-hover)] text-sm font-medium px-4 py-1.5 bg-white/5 rounded-full border border-white/10 hover:border-white/20 transition-all duration-300"
+              >
+                {suggestion}
+              </Link>
+            ))}
+          </div>
         </motion.div>
       </div>
 
-      {/* Scroll indicator */}
+      {/* Floating Mockup Cards (Deep Twilight aesthetic) */}
       <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.5 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2"
+        style={{ y: yFloating1, opacity: opacityFloating }}
+        className="absolute top-[20%] -left-16 w-80 h-48 frosted-glass rounded-[24px] p-8 animate-float hidden xl:block pointer-events-none"
+        custom={{ "--rot": "-3deg" } as any}
       >
-        <motion.div
-          animate={{ y: [0, 10, 0] }}
-          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-          className="w-6 h-10 rounded-full border-2 border-border/50 flex items-start justify-center p-2"
-        >
-          <motion.div className="w-1.5 h-1.5 rounded-full bg-accent" />
-        </motion.div>
+        <div className="w-12 h-1.5 bg-white/20 rounded-full mb-4" />
+        <div className="space-y-2">
+          <div className="w-full h-1 bg-white/10 rounded-full" />
+          <div className="w-4/5 h-1 bg-white/10 rounded-full" />
+          <div className="w-2/3 h-1 bg-white/10 rounded-full" />
+        </div>
+        <div className="mt-8 flex gap-2">
+          <div className="w-6 h-6 rounded-full bg-[var(--color-primary)]/40" />
+          <div className="w-20 h-2 bg-white/10 rounded-full mt-2" />
+        </div>
+      </motion.div>
+
+      <motion.div
+        style={{ y: yFloating2, opacity: opacityFloating }}
+        className="absolute bottom-[20%] -right-16 w-88 h-56 frosted-glass rounded-[24px] p-8 animate-float hidden xl:block pointer-events-none"
+        custom={{ "--rot": "4deg" } as any}
+      >
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center">
+            <Sparkles className="w-5 h-5 text-[var(--color-primary-hover)]" />
+          </div>
+          <div className="text-white/80 font-bold text-sm">System Prompt</div>
+        </div>
+        <div className="space-y-3">
+          <div className="w-full h-1.5 bg-white/10 rounded-full" />
+          <div className="w-full h-1.5 bg-white/10 rounded-full" />
+          <div className="w-1/2 h-1.5 bg-white/10 rounded-full" />
+        </div>
       </motion.div>
     </section>
   );

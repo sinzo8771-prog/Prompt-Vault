@@ -27,114 +27,151 @@ export default async function HomePage() {
       <Hero promptCount={allPrompts.length} />
 
       {/* ═══ MARQUEE — AI Tools ═══ */}
-      <section className="py-6 sm:py-8 border-y border-border/30 bg-bg-elevated/50 overflow-hidden">
-        <div className="marquee">
-          <div className="marquee-track" style={{ "--marquee-speed": "25s" } as React.CSSProperties}>
-            {[...Array(2)].map((_, i) => (
-              <div key={i} className="flex items-center gap-6 sm:gap-8 px-4">
-                {["ChatGPT", "Claude", "Midjourney", "Gemini", "Copilot", "DeepSeek", "Llama", "Grok"].map(
-                  (tool) => (
-                    <span
-                      key={`${i}-${tool}`}
-                      className="text-xs sm:text-sm font-mono text-text-muted/50 whitespace-nowrap flex items-center gap-2"
-                    >
-                      <span className="w-1.5 h-1.5 rounded-full bg-accent/30" />
-                      {tool}
-                    </span>
-                  )
-                )}
-              </div>
+      <section className="py-12 bg-[var(--color-surface-dark)] border-y border-white/5 overflow-hidden">
+        <div className="marquee-track">
+          <div className="flex items-center gap-20 px-10">
+            {["ChatGPT", "Claude 3.5 Sonnet", "Midjourney v6", "Gemini 1.5 Pro", "Llama 3", "Perplexity AI"].map((tool, index) => (
+              <span
+                key={`m1-${tool}`}
+                className="text-white/30 font-mono text-[11px] uppercase tracking-[0.4em] flex items-center gap-4 whitespace-nowrap"
+              >
+                <span className={`w-1.5 h-1.5 rounded-full bg-[var(--color-primary)]/${index % 2 === 0 ? "60" : "40"}`} />
+                {tool}
+              </span>
+            ))}
+          </div>
+          <div className="flex items-center gap-20 px-10">
+            {["ChatGPT", "Claude 3.5 Sonnet", "Midjourney v6", "Gemini 1.5 Pro", "Llama 3", "Perplexity AI"].map((tool, index) => (
+              <span
+                key={`m2-${tool}`}
+                className="text-white/30 font-mono text-[11px] uppercase tracking-[0.4em] flex items-center gap-4 whitespace-nowrap"
+              >
+                <span className={`w-1.5 h-1.5 rounded-full bg-[var(--color-primary)]/${index % 2 === 0 ? "60" : "40"}`} />
+                {tool}
+              </span>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ═══ CATEGORIES ═══ */}
-      <section className="section">
-        <div className="container">
-          <ScrollReveal>
-            <div className="flex items-end justify-between mb-10 sm:mb-12">
-              <div>
-                <p className="label mb-2 sm:mb-3">01 / Categories</p>
-                <h2 className="heading-xl">Browse by use case</h2>
-              </div>
+      {/* ═══ CATEGORIES (Asymmetric Editorial Layout) ═══ */}
+      <section className="py-24 px-12 bg-[var(--color-surface)]">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-stretch gap-0">
+          {/* Left Column / Title Block */}
+          <div className="w-full md:w-[35%] md:pr-12 mb-12 md:mb-0">
+            <ScrollReveal>
+              <span className="text-[var(--color-on-surface-muted)] text-sm font-semibold tracking-widest uppercase mb-6 block">
+                01 / Categories
+              </span>
+              <h2 className="text-headline text-[var(--color-on-surface)] mb-8">
+                Architectural Clarity
+              </h2>
+              <p className="text-[var(--color-on-surface-muted)] text-lg leading-relaxed max-w-sm mb-12">
+                We organize the world's finest prompts into semantic clusters, ensuring you find the exact nuance for your output.
+              </p>
               <Link
                 href="/search"
-                className="text-sm font-mono text-accent hover:text-accent-hover transition-colors hidden sm:flex items-center gap-1 group"
+                className="group inline-flex items-center gap-3 text-[var(--color-primary)] font-bold transition-standard"
               >
-                View all
-                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                Explore all categories
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-all transition-standard" />
               </Link>
-            </div>
-          </ScrollReveal>
+            </ScrollReveal>
+          </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-            {categories.slice(0, 6).map((cat, i) => (
-              <CategoryCard key={cat.slug} category={cat} index={i} />
+          {/* Vertical dashed divider */}
+          <div className="hidden md:block dashed-divider-v mx-12" />
+
+          {/* Right Column / Cards Grid */}
+          <div className="w-full md:flex-1 grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {categories.slice(0, 4).map((cat, i) => (
+              <ScrollReveal key={cat.slug} delay={i * 100}>
+                <CategoryCard category={cat} index={i} />
+              </ScrollReveal>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ═══ FEATURED ═══ */}
-      <section className="section bg-bg-elevated/30">
-        <div className="container">
-          <ScrollReveal>
-            <div className="flex items-end justify-between mb-10 sm:mb-12">
-              <div>
-                <p className="label mb-2 sm:mb-3">02 / Featured</p>
-                <h2 className="heading-xl">Hand-picked prompts</h2>
-              </div>
-              <Link
-                href="/search"
-                className="text-sm font-mono text-accent hover:text-accent-hover transition-colors hidden sm:flex items-center gap-1 group"
-              >
-                Browse all
-                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-              </Link>
-            </div>
-          </ScrollReveal>
+      {/* ═══ FEATURED (Editorial Document Layout) ═══ */}
+      <section className="py-24 px-12 bg-[var(--color-surface-light)] border-y border-[var(--color-hairline)]">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-stretch gap-0">
+          {/* Left Column */}
+          <div className="w-full md:w-[35%] md:pr-12 mb-12 md:mb-0">
+            <ScrollReveal>
+              <span className="text-[var(--color-on-surface-muted)] text-sm font-semibold tracking-widest uppercase mb-6 block">
+                02 / Featured
+              </span>
+              <h2 className="text-headline text-[var(--color-on-surface)] mb-8">
+                Masterpieces of Interaction
+              </h2>
+              <p className="text-[var(--color-on-surface-muted)] text-lg leading-relaxed max-w-sm">
+                Hand-selected by our engineering team for their exceptional logic and creativity.
+              </p>
+            </ScrollReveal>
+          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-            {featured.map((prompt, i) => (
-              <PromptCard key={prompt.id} prompt={prompt} index={i} />
+          {/* Vertical dashed divider */}
+          <div className="hidden md:block dashed-divider-v mx-12" />
+
+          {/* Right Column */}
+          <div className="w-full md:flex-1 space-y-8">
+            {featured.slice(0, 1).map((prompt, i) => (
+              <ScrollReveal key={prompt.id} delay={100}>
+                <PromptCard prompt={prompt} index={i} />
+              </ScrollReveal>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ═══ TRENDING ═══ */}
-      <section className="section">
-        <div className="container">
-          <ScrollReveal>
-            <div className="mb-10 sm:mb-12">
-              <p className="label mb-2 sm:mb-3">03 / Trending</p>
-              <h2 className="heading-xl">Most copied this week</h2>
-            </div>
-          </ScrollReveal>
+      {/* ═══ TRENDING (List Discovery) ═══ */}
+      <section className="py-24 px-12 bg-[var(--color-surface)]">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-stretch gap-0">
+          {/* Left Column */}
+          <div className="w-full md:w-[35%] md:pr-12 mb-12 md:mb-0">
+            <ScrollReveal>
+              <span className="text-[var(--color-on-surface-muted)] text-sm font-semibold tracking-widest uppercase mb-6 block">
+                03 / Trending
+              </span>
+              <h2 className="text-headline text-[var(--color-on-surface)] mb-8">
+                Echoes of the Masses
+              </h2>
+              <p className="text-[var(--color-on-surface-muted)] text-lg leading-relaxed max-w-sm">
+                The most duplicated and refined interactions across our global network this week.
+              </p>
+            </ScrollReveal>
+          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 sm:gap-3">
-            {trending.map((prompt, i) => (
-              <ScrollReveal key={prompt.id} delay={i * 40}>
+          {/* Vertical dashed divider */}
+          <div className="hidden md:block dashed-divider-v mx-12" />
+
+          {/* Right Column / List */}
+          <div className="w-full md:flex-1 grid grid-cols-1 gap-5">
+            {trending.slice(0, 3).map((prompt, i) => (
+              <ScrollReveal key={prompt.id} delay={i * 100}>
                 <Link
                   href={`/prompt/${prompt.slug}`}
-                  className="flex items-center gap-3 sm:gap-4 p-4 sm:p-5 bg-bg-card border border-border/50 rounded-xl hover:border-accent/30 transition-all duration-300 group"
+                  className="flex items-center gap-8 p-8 bg-[var(--color-surface-light)] border border-[var(--color-hairline)] rounded-[24px] hover:bg-white hover:border-[var(--color-primary)]/40 hover:-translate-y-1 hover:scale-[1.01] transition-all transition-standard group block"
                 >
-                  <span className="text-xl sm:text-2xl font-bold font-mono text-text-muted/20 w-7 sm:w-8 text-center shrink-0 group-hover:text-accent/40 transition-colors">
+                  <span className="text-3xl font-bold font-mono text-[var(--color-on-surface)]/10 group-hover:text-[var(--color-primary)]/20 transition-all transition-standard">
                     {String(i + 1).padStart(2, "0")}
                   </span>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-text group-hover:text-accent transition-colors line-clamp-1">
+                    <h4 className="text-lg font-bold text-[var(--color-on-surface)] group-hover:text-[var(--color-primary)] transition-colors line-clamp-1">
                       {prompt.title}
-                    </p>
-                    <p className="text-xs text-text-muted mt-1 line-clamp-1 font-mono">
-                      {prompt.body.slice(0, 80)}
+                    </h4>
+                    <p className="text-sm text-[var(--color-on-surface-muted)] mt-1 line-clamp-1">
+                      {prompt.body}
                     </p>
                   </div>
-                  <div className="flex items-center gap-1.5 shrink-0">
-                    <span className="text-xs font-mono text-accent/70">
-                      {prompt.copyCount.toLocaleString()}
-                    </span>
+                  <div className="text-right shrink-0">
+                    <div className="text-xs font-mono font-bold text-[var(--color-primary)]">
+                      {prompt.copyCount.toLocaleString()} COPIES
+                    </div>
+                    <div className="text-[10px] text-[var(--color-on-surface-muted)] mt-1">
+                      ↑ 24% this week
+                    </div>
                   </div>
                 </Link>
               </ScrollReveal>
@@ -144,57 +181,56 @@ export default async function HomePage() {
       </section>
 
       {/* ═══ STATS ═══ */}
-      <section className="section-sm bg-bg-elevated/30 border-y border-border/30">
-        <div className="container">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8">
-            {[
-              { icon: Sparkles, value: allPrompts.length + "+", label: "Prompts" },
-              { icon: Zap, value: categories.length.toString(), label: "Categories" },
-              { icon: Globe, value: "8+", label: "AI Tools" },
-              { icon: Heart, value: "Free", label: "Forever" },
-            ].map((stat) => (
-              <ScrollReveal key={stat.label}>
-                <div className="text-center group">
-                  <div className="w-10 sm:w-12 h-10 sm:h-12 mx-auto mb-3 sm:mb-4 rounded-xl sm:rounded-2xl bg-bg-card border border-border/50 flex items-center justify-center group-hover:border-accent/30 transition-colors">
-                    <stat.icon className="w-4 sm:w-5 h-4 sm:h-5 text-accent" />
-                  </div>
-                  <p className="text-2xl sm:text-3xl font-bold text-text">{stat.value}</p>
-                  <p className="text-[10px] sm:text-xs font-mono text-text-muted uppercase tracking-wider mt-1.5 sm:mt-2">
-                    {stat.label}
-                  </p>
+      <section className="py-20 bg-[var(--color-surface-light)] border-y border-[var(--color-hairline)]">
+        <div className="max-w-7xl mx-auto px-12 grid grid-cols-2 lg:grid-cols-4 gap-12">
+          {[
+            { value: "12,400+", label: "Verified Prompts" },
+            { value: "1.2M", label: "Monthly Executions" },
+            { value: "99.2%", label: "Response Accuracy" },
+            { value: "24/7", label: "Oracle Availability" },
+          ].map((stat) => (
+            <ScrollReveal key={stat.label}>
+              <div className="text-center group">
+                <div className="text-5xl font-bold text-[var(--color-on-surface)] mb-2 group-hover:text-[var(--color-primary)] transition-colors transition-standard">
+                  {stat.value}
                 </div>
-              </ScrollReveal>
-            ))}
-          </div>
+                <div className="text-xs font-mono uppercase tracking-[0.2em] text-[var(--color-on-surface-muted)]">
+                  {stat.label}
+                </div>
+              </div>
+            </ScrollReveal>
+          ))}
         </div>
       </section>
 
       {/* ═══ CTA ═══ */}
-      <section className="section">
-        <div className="container">
-          <div className="max-w-3xl mx-auto text-center">
-            <ScrollReveal>
-              <p className="label mb-4">Ready?</p>
-              <h2 className="display-2 mb-6">
-                Stop prompting.
-                <br />
-                <span className="text-gradient-warm">Start shipping.</span>
-              </h2>
-              <p className="body-lg max-w-lg mx-auto mb-10">
-                Join thousands of developers, marketers, and creators who use
-                PromptVault to get better results from AI tools.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link href="/category/writing" className="btn-primary">
-                  Browse Prompts
-                  <ArrowRight className="w-4 h-4" />
-                </Link>
-                <Link href="/generator" className="btn-ghost">
-                  Try Generator
-                </Link>
-              </div>
-            </ScrollReveal>
-          </div>
+      <section className="py-24 bg-gradient-to-b from-[var(--color-surface)] to-[var(--color-surface-light)] text-center px-6">
+        <div className="max-w-3xl mx-auto">
+          <ScrollReveal>
+            <span className="text-[var(--color-primary)] text-sm font-bold tracking-[0.3em] uppercase mb-8 block">
+              Final Call
+            </span>
+            <h2 className="text-display text-[var(--color-on-surface)] mb-10">
+              Stop Prompting.<br />Start Engineering.
+            </h2>
+            <p className="text-xl text-[var(--color-on-surface-muted)] mb-12 max-w-xl mx-auto">
+              Join 50,000+ engineers using PromptVault to bridge the gap between human intent and machine perfection.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+              <Link
+                href="/category/writing"
+                className="bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] hover:text-[var(--color-surface-dark)] text-white px-10 py-5 rounded-xl transition-all transition-standard font-bold text-lg shadow-xl shadow-[var(--color-primary)]/10"
+              >
+                Create Your Vault
+              </Link>
+              <Link
+                href="/about"
+                className="bg-white border border-[var(--color-hairline)] hover:bg-[var(--color-surface-light)] text-[var(--color-on-surface)] px-10 py-5 rounded-xl transition-all transition-standard font-bold text-lg"
+              >
+                View Enterprise Pricing
+              </Link>
+            </div>
+          </ScrollReveal>
         </div>
       </section>
     </>

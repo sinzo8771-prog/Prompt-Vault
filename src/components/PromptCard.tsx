@@ -8,17 +8,6 @@ import { CopyButton } from "./CopyButton";
 import { SaveButton } from "./SaveButton";
 import { ArrowUpRight, Sparkles } from "lucide-react";
 
-const TOOL_BADGE: Record<string, string> = {
-  ChatGPT: "badge-chatgpt",
-  Midjourney: "badge-midjourney",
-  Claude: "badge-claude",
-  Gemini: "badge-gemini",
-  Copilot: "badge-copilot",
-  DeepSeek: "badge-deepseek",
-  Coding: "badge-coding",
-  Other: "badge-other",
-};
-
 export function PromptCard({
   prompt,
   compact = false,
@@ -31,9 +20,7 @@ export function PromptCard({
   const cardRef = useRef<HTMLDivElement>(null);
   const [isHovered, setIsHovered] = useState(false);
 
-  const badge = TOOL_BADGE[prompt.aiTool] || TOOL_BADGE.Other;
-
-  // Mouse tracking for 3D effect
+  // Mouse tracking for subtle 3D hover depth
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
@@ -72,37 +59,30 @@ export function PromptCard({
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: index * 0.05 }}
-        className="group relative p-4 bg-bg-card border border-border/50 rounded-xl hover:border-accent/30 transition-colors"
+        className="group relative p-6 bg-[var(--color-surface-light)] border border-[var(--color-hairline)] rounded-[20px] hover:bg-white hover:border-[var(--color-primary)]/30 transition-all transition-standard"
       >
-        {/* Hover glow effect */}
-        <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
-          <div className="absolute inset-0 bg-gradient-to-br from-accent/5 to-transparent" />
-        </div>
-
         <div className="relative z-10">
           <div className="flex items-start justify-between gap-3 mb-3">
             <Link
               href={`/prompt/${prompt.slug}`}
-              className="text-sm font-semibold text-text group-hover:text-accent transition-colors line-clamp-1 flex-1"
+              className="text-lg font-bold text-[var(--color-on-surface)] group-hover:text-[var(--color-primary)] transition-colors line-clamp-1 flex-1"
             >
               {prompt.title}
             </Link>
-            <span
-              className={`shrink-0 text-[10px] font-mono font-bold px-2 py-0.5 border rounded-md uppercase tracking-wider ${badge}`}
-            >
+            <span className="shrink-0 text-[10px] font-mono font-bold px-2 py-0.5 border border-[var(--color-hairline)] rounded-md uppercase tracking-wider text-[var(--color-primary)] bg-[var(--color-primary)]/10">
               {prompt.aiTool}
             </span>
           </div>
 
-          <p className="text-xs text-text-muted line-clamp-2 mb-3 font-mono leading-relaxed">
+          <p className="text-xs text-[var(--color-on-surface-muted)] line-clamp-2 mb-3 leading-relaxed">
             {prompt.body.slice(0, 120)}...
           </p>
 
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-mono text-text-muted">
+            <span className="text-[10px] font-mono text-[var(--color-on-surface-muted)] uppercase tracking-wider">
               {prompt.copyCount.toLocaleString()} copies
             </span>
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-2">
               <SaveButton prompt={prompt} />
               <CopyButton text={prompt.body} />
             </div>
@@ -122,68 +102,47 @@ export function PromptCard({
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, delay: index * 0.08, ease: [0.25, 0.4, 0.25, 1] }}
-      className="group relative bg-bg-card border border-border/50 rounded-2xl hover:border-border-hover transition-all duration-500 p-6 flex flex-col overflow-hidden"
+      className="group relative bg-white border border-[var(--color-hairline)] rounded-[32px] overflow-hidden hover:border-[var(--color-primary)]/20 transition-all transition-standard p-12 flex flex-col h-full"
     >
-      {/* Animated gradient border on hover */}
-      <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
-        <div className="absolute inset-0 bg-gradient-to-br from-accent/10 via-transparent to-secondary/10" />
-      </div>
-
-      {/* Mouse-following spotlight */}
-      <div
-        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
-        style={{
-          background: `radial-gradient(600px circle at ${mouseX.get() * 100 + 50}% ${mouseY.get() * 100 + 50}%, rgba(220, 106, 74, 0.08), transparent 40%)`,
-        }}
-      />
-
       <div className="relative z-10 flex flex-col h-full">
         {/* Header */}
-        <div className="flex items-start justify-between gap-3 mb-4">
-          <Link
-            href={`/prompt/${prompt.slug}`}
-            className="text-base font-bold text-text group-hover:text-accent transition-colors line-clamp-2 leading-tight flex-1"
-          >
-            {prompt.title}
-          </Link>
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: isHovered ? 1 : 0, scale: isHovered ? 1 : 0.8 }}
-            className="shrink-0"
-          >
-            <div className="w-8 h-8 rounded-lg bg-accent/10 flex items-center justify-center">
-              <ArrowUpRight className="w-4 h-4 text-accent" />
-            </div>
-          </motion.div>
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-4">
+            <span className="px-4 py-1.5 bg-[var(--color-primary)]/10 text-[var(--color-primary)] text-xs font-bold rounded-full uppercase tracking-tighter">
+              {prompt.aiTool}
+            </span>
+            <span className="text-[var(--color-on-surface-muted)] text-xs font-mono uppercase">
+              {prompt.category.replace(/-/g, " ")}
+            </span>
+          </div>
+          <div className="flex gap-2 items-center">
+            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="text-[10px] font-bold text-emerald-600 uppercase">
+              High Reliability
+            </span>
+          </div>
         </div>
 
-        {/* Badges */}
-        <div className="flex items-center gap-2 mb-4">
-          <span
-            className={`text-[10px] font-mono font-bold px-2.5 py-1 border rounded-md uppercase tracking-wider ${badge}`}
-          >
-            {prompt.aiTool}
-          </span>
-          <span className="text-[10px] font-mono text-text-muted capitalize px-2 py-1 bg-text/5 rounded-md">
-            {prompt.category.replace(/-/g, " ")}
-          </span>
-        </div>
+        {/* Title */}
+        <Link
+          href={`/prompt/${prompt.slug}`}
+          className="text-3xl font-semibold text-[var(--color-on-surface)] hover:text-[var(--color-primary)] transition-colors mb-6 leading-tight block"
+        >
+          {prompt.title}
+        </Link>
 
-        {/* Code preview */}
-        <div className="code-block mb-4 flex-1 relative">
-          <pre className="text-xs font-mono whitespace-pre-wrap line-clamp-5 leading-relaxed text-text-secondary">
-            {prompt.body}
-          </pre>
-          <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-surface to-transparent" />
-        </div>
+        {/* Code/Prompt Body */}
+        <p className="text-[var(--color-on-surface-muted)] text-lg leading-relaxed mb-8 italic border-l-4 border-[var(--color-primary)]/20 pl-6 line-clamp-4">
+          "{prompt.body}"
+        </p>
 
         {/* Tags */}
-        <div className="flex items-center gap-1.5 flex-wrap mb-4">
+        <div className="flex flex-wrap gap-2 mb-8">
           {prompt.tags.slice(0, 3).map((tag) => (
             <Link
               key={tag}
               href={`/search?q=${encodeURIComponent(tag)}`}
-              className="text-[10px] font-mono text-text-muted px-2 py-1 bg-text/5 rounded-md hover:bg-accent/10 hover:text-accent transition-all duration-300"
+              className="text-xs font-mono text-[var(--color-on-surface-muted)] hover:text-[var(--color-primary)] transition-colors"
             >
               #{tag}
             </Link>
@@ -191,14 +150,15 @@ export function PromptCard({
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between pt-4 border-t border-border/30">
+        <div className="flex items-center justify-between pt-8 border-t border-[var(--color-hairline)] mt-auto">
           <div className="flex items-center gap-2">
-            <Sparkles className="w-3.5 h-3.5 text-accent/60" />
-            <span className="text-[11px] font-mono text-text-muted">
-              {prompt.copyCount.toLocaleString()} copies
-            </span>
+            <Sparkles className="w-4 h-4 text-[var(--color-primary)]" />
+            <div className="flex flex-col">
+              <span className="text-[10px] uppercase tracking-widest opacity-40 leading-none mb-1">Executions</span>
+              <span className="text-sm font-bold leading-none">{prompt.copyCount.toLocaleString()}</span>
+            </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex gap-3">
             <SaveButton prompt={prompt} />
             <CopyButton text={prompt.body} />
           </div>

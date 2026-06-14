@@ -24,7 +24,6 @@ export function Header() {
 
   const { scrollY } = useScroll();
   const headerOpacity = useTransform(scrollY, [0, 100], [0.95, 1]);
-  const headerBlur = useTransform(scrollY, [0, 100], [0, 20]);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -32,7 +31,6 @@ export function Header() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Keyboard shortcut for search
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === "k") {
@@ -61,36 +59,27 @@ export function Header() {
     <>
       <motion.header
         style={{ opacity: headerOpacity }}
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-          scrolled ? "py-2" : "py-4"
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 bg-[var(--color-surface-dark)]/90 backdrop-blur-md border-b border-white/5 ${
+          scrolled ? "py-3" : "py-5"
         }`}
       >
-        {/* Glass background */}
-        <motion.div
-          style={{
-            backdropFilter: `blur(${headerBlur}px) saturate(180%)`,
-            WebkitBackdropFilter: `blur(${headerBlur}px) saturate(180%)`,
-          }}
-          className="absolute inset-0 bg-bg/70 border-b border-border/30"
-        />
-
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-14 sm:h-16">
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
+          <div className="flex items-center justify-between h-14">
             {/* Logo */}
-            <Link href="/" className="flex items-center gap-2.5 group">
+            <Link href="/" className="flex items-center gap-3 group">
               <motion.div
                 whileHover={{ rotate: 180 }}
                 transition={{ duration: 0.5 }}
               >
                 <AnimatedLogo size={32} />
               </motion.div>
-              <span className="text-lg font-bold tracking-tight text-text hidden sm:block">
-                Prompt<span className="text-accent">Vault</span>
+              <span className="text-xl font-bold tracking-tighter text-white">
+                PromptVault.
               </span>
             </Link>
 
             {/* Desktop Nav */}
-            <nav className="hidden md:flex items-center gap-1">
+            <nav className="hidden md:flex items-center gap-8">
               {NAV.map((item) => {
                 const active =
                   pathname === item.href ||
@@ -99,55 +88,40 @@ export function Header() {
                   <Link
                     key={item.href}
                     href={item.href}
-                    className="relative px-4 py-2 text-[13px] font-medium tracking-wide transition-colors rounded-lg"
+                    className={`text-sm font-medium transition-all transition-standard ${
+                      active ? "text-white" : "text-white/60 hover:text-white"
+                    }`}
                   >
-                    <span
-                      className={`relative z-10 ${
-                        active ? "text-text" : "text-text-muted hover:text-text-secondary"
-                      }`}
-                    >
-                      {item.label}
-                    </span>
-                    {active && (
-                      <motion.div
-                        layoutId="nav-pill"
-                        className="absolute inset-0 bg-text/5 border border-border/30 rounded-lg"
-                        transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                      />
-                    )}
+                    {item.label}
                   </Link>
                 );
               })}
             </nav>
 
             {/* Right side */}
-            <div className="hidden md:flex items-center gap-3">
+            <div className="hidden md:flex items-center gap-6">
               {/* Search trigger */}
               <button
                 onClick={() => setSearchOpen(true)}
-                className="flex items-center gap-2 px-4 py-2 bg-bg-card border border-border/50 rounded-full hover:border-accent/30 transition-all group"
+                className="flex items-center gap-2 text-white/60 hover:text-white transition-all text-sm font-medium transition-standard"
               >
-                <Search className="w-4 h-4 text-text-muted group-hover:text-accent transition-colors" />
-                <span className="text-xs text-text-muted">Search</span>
-                <kbd className="hidden lg:flex items-center gap-0.5 px-1.5 py-0.5 text-[10px] font-mono text-text-muted bg-bg/50 border border-border/50 rounded">
-                  ⌘K
-                </kbd>
+                <Search className="w-4 h-4" />
+                <span>Search</span>
               </button>
 
-              {/* Generate button */}
+              {/* Get Started / Generate button */}
               <Link
                 href="/generator"
-                className="flex items-center gap-2 px-5 py-2.5 bg-accent text-white rounded-full hover:bg-accent-hover transition-all text-xs font-bold tracking-wide group"
+                className="bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] hover:text-[var(--color-surface-dark)] text-white px-6 py-2.5 rounded-[8px] transition-standard font-semibold text-sm active:scale-[0.98]"
               >
-                <Sparkles className="w-3.5 h-3.5 group-hover:rotate-12 transition-transform" />
-                Generate
+                Get Started
               </Link>
             </div>
 
             {/* Mobile toggle */}
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
-              className="md:hidden p-2 text-text-muted hover:text-text transition-colors rounded-lg"
+              className="md:hidden p-2 text-white/60 hover:text-white transition-colors rounded-lg"
               aria-label={mobileOpen ? "Close menu" : "Open menu"}
             >
               {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -165,7 +139,7 @@ export function Header() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setSearchOpen(false)}
-              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60]"
+              className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[60]"
             />
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: -20 }}
@@ -175,23 +149,23 @@ export function Header() {
               className="fixed top-[20%] left-1/2 -translate-x-1/2 w-full max-w-xl z-[70] px-4"
             >
               <form onSubmit={handleSearchSubmit}>
-                <div className="bg-bg-card border border-border/50 rounded-2xl shadow-2xl overflow-hidden">
-                  <div className="flex items-center gap-3 px-5 py-4 border-b border-border/30">
-                    <Search className="w-5 h-5 text-accent" />
+                <div className="bg-[var(--color-surface-dark)] border border-white/10 rounded-2xl shadow-2xl overflow-hidden oracle-glow">
+                  <div className="flex items-center gap-3 px-5 py-4 border-b border-white/5">
+                    <Search className="w-5 h-5 text-[var(--color-primary)]" />
                     <input
                       type="text"
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       placeholder="Search prompts, tools, categories..."
-                      className="flex-1 bg-transparent text-text placeholder:text-text-muted focus:outline-none font-medium"
+                      className="flex-1 bg-transparent text-white placeholder:text-white/20 focus:outline-hidden font-medium"
                       autoFocus
                     />
-                    <kbd className="px-2 py-1 text-[10px] font-mono text-text-muted bg-bg/50 border border-border/50 rounded">
+                    <kbd className="px-2 py-1 text-[10px] font-mono text-white/40 bg-white/5 border border-white/10 rounded">
                       ESC
                     </kbd>
                   </div>
                   <div className="p-3 max-h-[300px] overflow-y-auto">
-                    <p className="text-[10px] font-mono text-text-muted uppercase tracking-wider px-3 py-2">
+                    <p className="text-[10px] font-mono text-white/30 uppercase tracking-wider px-3 py-2">
                       Popular searches
                     </p>
                     {["Blog Writer", "Code Review", "Cold Email", "SEO", "Midjourney"].map(
@@ -203,10 +177,10 @@ export function Header() {
                             router.push(`/search?q=${encodeURIComponent(suggestion)}`);
                             setSearchOpen(false);
                           }}
-                          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-bg-hover transition-colors text-left group"
+                          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 transition-colors text-left group"
                         >
-                          <Search className="w-4 h-4 text-text-muted group-hover:text-accent transition-colors" />
-                          <span className="text-sm text-text-secondary group-hover:text-text transition-colors">
+                          <Search className="w-4 h-4 text-white/40 group-hover:text-[var(--color-primary-hover)] transition-colors" />
+                          <span className="text-sm text-white/80 group-hover:text-white transition-colors">
                             {suggestion}
                           </span>
                         </button>
@@ -230,7 +204,7 @@ export function Header() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setMobileOpen(false)}
-              className="fixed inset-0 bg-black/50 z-40 md:hidden"
+              className="fixed inset-0 bg-black/60 z-40 md:hidden"
             />
             {/* Menu panel */}
             <motion.div
@@ -238,20 +212,20 @@ export function Header() {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: "100%" }}
               transition={{ type: "spring", stiffness: 300, damping: 30 }}
-              className="fixed inset-y-0 right-0 w-full max-w-sm z-50 bg-bg/98 backdrop-blur-2xl border-l border-border/30 md:hidden"
+              className="fixed inset-y-0 right-0 w-full max-w-sm z-50 bg-[var(--color-surface-dark)] border-l border-white/5 md:hidden"
             >
               <div className="flex flex-col h-full">
                 {/* Mobile header */}
-                <div className="flex items-center justify-between px-6 py-4 border-b border-border/30">
+                <div className="flex items-center justify-between px-6 py-6 border-b border-white/5">
                   <Link href="/" className="flex items-center gap-2" onClick={() => setMobileOpen(false)}>
                     <AnimatedLogo size={28} />
-                    <span className="text-lg font-bold tracking-tight text-text">
-                      Prompt<span className="text-accent">Vault</span>
+                    <span className="text-lg font-bold tracking-tight text-white">
+                      PromptVault.
                     </span>
                   </Link>
                   <button
                     onClick={() => setMobileOpen(false)}
-                    className="p-2 text-text-muted hover:text-text transition-colors rounded-lg"
+                    className="p-2 text-white/60 hover:text-white transition-colors rounded-lg"
                     aria-label="Close menu"
                   >
                     <X className="w-5 h-5" />
@@ -276,7 +250,7 @@ export function Header() {
                             href={item.href}
                             onClick={() => setMobileOpen(false)}
                             className={`text-xl font-bold py-3 block transition-colors ${
-                              active ? "text-accent" : "text-text hover:text-accent"
+                              active ? "text-[var(--color-primary-hover)]" : "text-white hover:text-[var(--color-primary-hover)]"
                             }`}
                           >
                             {item.label}
@@ -292,7 +266,7 @@ export function Header() {
                   <Link
                     href="/generator"
                     onClick={() => setMobileOpen(false)}
-                    className="flex items-center justify-center gap-2 w-full px-6 py-4 bg-accent text-white rounded-2xl font-bold text-lg hover:bg-accent-hover transition-colors"
+                    className="flex items-center justify-center gap-2 w-full px-6 py-4 bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white hover:text-[var(--color-surface-dark)] rounded-[8px] font-bold text-lg transition-standard"
                   >
                     <Sparkles className="w-5 h-5" />
                     Generate Prompt
