@@ -1,9 +1,10 @@
 import type { NextConfig } from "next";
+import path from "path";
 
 const nextConfig: NextConfig = {
   turbopack: {
-    // Ensure Next.js uses the correct project root (prevents “inferred workspace root” warning).
-    root: "./",
+    // Next.js expects an absolute path for turbopack.root
+    root: path.resolve(__dirname),
   },
 };
 
