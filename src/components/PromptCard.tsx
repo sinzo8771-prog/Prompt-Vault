@@ -133,7 +133,7 @@ export function PromptCard({
 
         {/* Code/Prompt Body */}
         <p className="text-[var(--color-on-surface-muted)] text-lg leading-relaxed mb-8 italic border-l-4 border-[var(--color-primary)]/20 pl-6 line-clamp-4">
-          "{prompt.body}"
+          &ldquo;{prompt.body}&rdquo;
         </p>
 
         {/* Tags */}

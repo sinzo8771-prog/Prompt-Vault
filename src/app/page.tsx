@@ -67,7 +67,7 @@ export default async function HomePage() {
                 Architectural Clarity
               </h2>
               <p className="text-[var(--color-on-surface-muted)] text-lg leading-relaxed max-w-sm mb-12">
-                We organize the world's finest prompts into semantic clusters, ensuring you find the exact nuance for your output.
+                We organize the world&apos;s finest prompts into semantic clusters, ensuring you find the exact nuance for your output.
               </p>
               <Link
                 href="/search"
@@ -222,12 +222,6 @@ export default async function HomePage() {
                 className="bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] hover:text-[var(--color-surface-dark)] text-white px-10 py-5 rounded-xl transition-all transition-standard font-bold text-lg shadow-xl shadow-[var(--color-primary)]/10"
               >
                 Create Your Vault
-              </Link>
-              <Link
-                href="/about"
-                className="bg-white border border-[var(--color-hairline)] hover:bg-[var(--color-surface-light)] text-[var(--color-on-surface)] px-10 py-5 rounded-xl transition-all transition-standard font-bold text-lg"
-              >
-                View Enterprise Pricing
               </Link>
             </div>
           </ScrollReveal>
