@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, ArrowRight, Command } from "lucide-react";
@@ -18,7 +18,22 @@ export function SearchBar() {
   const [query, setQuery] = useState("");
   const [isFocused, setIsFocused] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const rootRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
+
+  useEffect(() => {
+    const onDocMouseDown = (e: MouseEvent) => {
+      if (!isFocused) return;
+      const el = rootRef.current;
+      if (!el) return;
+      if (e.target instanceof Node && !el.contains(e.target)) {
+        setIsFocused(false);
+      }
+    };
+
+    document.addEventListener("mousedown", onDocMouseDown);
+    return () => document.removeEventListener("mousedown", onDocMouseDown);
+  }, [isFocused]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,10 +57,11 @@ export function SearchBar() {
     }
   };
 
-  const shouldShowSuggestions = isFocused && query.trim().length < 2;
+  const shouldShowSuggestions =
+    isFocused && query.trim().length > 0 && query.trim().length < 8;
 
   return (
-    <div className="relative w-full">
+    <div ref={rootRef} className="relative w-full">
       <form onSubmit={handleSubmit}>
         <div className="flex items-center w-full bg-transparent">
           {/* Search icon */}
