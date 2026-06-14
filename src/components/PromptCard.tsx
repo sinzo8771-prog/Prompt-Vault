@@ -1,12 +1,12 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import Link from "next/link";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import type { Prompt } from "@/lib/prompts";
 import { CopyButton } from "./CopyButton";
 import { SaveButton } from "./SaveButton";
-import { ArrowUpRight, Sparkles } from "lucide-react";
+import { Sparkles } from "lucide-react";
 
 export function PromptCard({
   prompt,
@@ -18,7 +18,6 @@ export function PromptCard({
   index?: number;
 }) {
   const cardRef = useRef<HTMLDivElement>(null);
-  const [isHovered, setIsHovered] = useState(false);
 
   // Mouse tracking for subtle 3D hover depth
   const mouseX = useMotionValue(0);
@@ -45,7 +44,6 @@ export function PromptCard({
   const handleMouseLeave = () => {
     mouseX.set(0);
     mouseY.set(0);
-    setIsHovered(false);
   };
 
   if (compact) {
@@ -54,7 +52,6 @@ export function PromptCard({
         ref={cardRef}
         style={{ rotateX, rotateY, transformPerspective: 1000 }}
         onMouseMove={handleMouseMove}
-        onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={handleMouseLeave}
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -97,7 +94,6 @@ export function PromptCard({
       ref={cardRef}
       style={{ rotateX, rotateY, transformPerspective: 1000 }}
       onMouseMove={handleMouseMove}
-      onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={handleMouseLeave}
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}

@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, ArrowRight, Command } from "lucide-react";
+import { Search, ArrowRight } from "lucide-react";
 
 const SUGGESTIONS = [
   "Blog post writer",

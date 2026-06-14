@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import Link from "next/link";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import type { Category } from "@/lib/prompts";
@@ -14,7 +14,6 @@ export function CategoryCard({
   index?: number;
 }) {
   const cardRef = useRef<HTMLDivElement>(null);
-  const [isHovered, setIsHovered] = useState(false);
 
   // Mouse tracking for subtle 3D effect
   const mouseX = useMotionValue(0);
@@ -41,7 +40,6 @@ export function CategoryCard({
   const handleMouseLeave = () => {
     mouseX.set(0);
     mouseY.set(0);
-    setIsHovered(false);
   };
 
   return (
@@ -50,7 +48,6 @@ export function CategoryCard({
         ref={cardRef}
         style={{ rotateX, rotateY, transformPerspective: 1000 }}
         onMouseMove={handleMouseMove}
-        onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={handleMouseLeave}
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}

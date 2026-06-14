@@ -1,16 +1,16 @@
 "use client";
 
-import { useRef, useEffect, useMemo, useState, type CSSProperties } from "react";
+import { useRef, useEffect, useMemo, type CSSProperties } from "react";
 import Link from "next/link";
-import { motion, useScroll, useTransform, useSpring, type MotionValue } from "framer-motion";
-import { Sparkles, Search } from "lucide-react";
+import { motion, useScroll, useTransform, useSpring } from "framer-motion";
+import { Sparkles } from "lucide-react";
 import { SearchBar } from "./SearchBar";
 
 interface HeroProps {
   promptCount: number;
 }
 
-export function Hero({ promptCount }: HeroProps) {
+export function Hero({}: HeroProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,

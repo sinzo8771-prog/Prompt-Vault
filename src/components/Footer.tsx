@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ExternalLink, Heart, ArrowUpRight, MessageCircle } from "lucide-react";
+import { ExternalLink, ArrowUpRight, MessageCircle } from "lucide-react";
 import { AnimatedLogo } from "./AnimatedLogo";
 
 const LINKS = {
