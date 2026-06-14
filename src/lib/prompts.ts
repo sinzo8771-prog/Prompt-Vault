@@ -114,6 +114,19 @@ async function queryDataSource(
 }
 
 
+// ─── Helpers ────────────────────────────────────────────────
+
+/** Normalize a category name (e.g. "AI & Automation") to a URL slug (e.g. "ai-and-automation") */
+function toSlug(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/&/g, "and")
+    .replace(/[^a-z0-9\s-]/g, "")
+    .trim()
+    .replace(/\s+/g, "-");
+}
+
+
 // ─── Public API (with Notion → local fallback) ─────────────
 
 export async function getAllPrompts(): Promise<Prompt[]> {
@@ -140,29 +153,29 @@ export async function getTrendingPrompts(count = 10): Promise<Prompt[]> {
 }
 
 export async function getPromptsByCategory(category: string): Promise<Prompt[]> {
+  // Map URL slug back to Notion category name
+  const slugToNotion: Record<string, string> = {
+    writing: "Writing",
+    design: "Design",
+    marketing: "Marketing",
+    development: "Development",
+    productivity: "Productivity",
+    creative: "Creative",
+    "sales-and-crm": "Sales & CRM",
+    "business-and-finance": "Business & Finance",
+    "education-and-learning": "Education & Learning",
+    "ai-and-automation": "AI & Automation",
+    "video-and-film": "Video & Film",
+  };
+  const notionCat = slugToNotion[category.toLowerCase()] || category;
+
   if (!hasNotion) {
     return (localPrompts as Prompt[]).filter(
-      (p) => p.category.toLowerCase() === category.toLowerCase()
+      (p) => toSlug(p.category) === category.toLowerCase()
     );
   }
 
   try {
-    // Map URL slug back to Notion category name
-    const slugToNotion: Record<string, string> = {
-      writing: "Writing",
-      design: "Design",
-      marketing: "Marketing",
-      development: "Development",
-      productivity: "Productivity",
-      creative: "Creative",
-      "sales-and-crm": "Sales & CRM",
-      "business-and-finance": "Business & Finance",
-      "education-and-learning": "Education & Learning",
-      "ai-and-automation": "AI & Automation",
-      "video-and-film": "Video & Film",
-    };
-    const notionCat = slugToNotion[category.toLowerCase()] || category;
-
     const records = await queryDataSource(
       { property: "Category", select: { equals: notionCat } },
       [{ property: "CopyCount", direction: "descending" }],
@@ -171,11 +184,11 @@ export async function getPromptsByCategory(category: string): Promise<Prompt[]> 
     return notionPrompts.length > 0
       ? notionPrompts
       : (localPrompts as Prompt[]).filter(
-          (p) => p.category.toLowerCase() === category.toLowerCase()
+          (p) => toSlug(p.category) === category.toLowerCase()
         );
   } catch {
     return (localPrompts as Prompt[]).filter(
-      (p) => p.category.toLowerCase() === category.toLowerCase()
+      (p) => toSlug(p.category) === category.toLowerCase()
     );
   }
 }
@@ -265,7 +278,7 @@ export async function getCategories(): Promise<Category[]> {
 
   const counts: Record<string, number> = {};
   for (const p of prompts) {
-    const c = p.category.toLowerCase();
+    const c = toSlug(p.category);
     counts[c] = (counts[c] || 0) + 1;
   }
 
@@ -274,12 +287,12 @@ export async function getCategories(): Promise<Category[]> {
       const def = catDef[slug] || { icon: "📁", color: "#666", description: "" };
       // Map slug back to display name
       const displayNameMap: Record<string, string> = {
-        "writing": "Writing",
-        "design": "Design",
-        "marketing": "Marketing",
-        "development": "Development",
-        "productivity": "Productivity",
-        "creative": "Creative",
+        writing: "Writing",
+        design: "Design",
+        marketing: "Marketing",
+        development: "Development",
+        productivity: "Productivity",
+        creative: "Creative",
         "sales-and-crm": "Sales & CRM",
         "business-and-finance": "Business & Finance",
         "education-and-learning": "Education & Learning",
