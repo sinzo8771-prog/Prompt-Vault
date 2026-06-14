@@ -36,7 +36,12 @@ export default function SubmitPage() {
       });
 
       if (res.ok) {
-        setStatus("Submitted successfully!");
+        const data = await res.json();
+        if (data.warning) {
+          setStatus("Saved! (connect Notion for permanent storage)");
+        } else {
+          setStatus("✅ Submitted successfully! It will appear after review.");
+        }
         form.reset();
       } else {
         setStatus("Failed to submit. Please try again.");

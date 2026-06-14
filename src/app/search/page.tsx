@@ -30,31 +30,45 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
         </div>
       </ScrollReveal>
 
-      {query && (
-        <ScrollReveal delay={50}>
-          <p className="text-xs font-mono text-text-muted mb-8">
-            {results.length} result{results.length !== 1 ? "s" : ""}
-          </p>
-        </ScrollReveal>
-      )}
+      {query ? (
+        <>
+          <ScrollReveal delay={50}>
+            <p className="text-xs font-mono text-text-muted mb-8">
+              {results.length} result{results.length !== 1 ? "s" : ""} for &quot;{query}&quot;
+            </p>
+          </ScrollReveal>
 
-      {results.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {results.map((prompt, i) => (
-            <ScrollReveal key={prompt.id} delay={i * 30}>
-              <PromptCard prompt={prompt} index={i} />
+          {results.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {results.map((prompt, i) => (
+                <ScrollReveal key={prompt.id} delay={i * 30}>
+                  <PromptCard prompt={prompt} index={i} />
+                </ScrollReveal>
+              ))}
+            </div>
+          ) : (
+            <ScrollReveal>
+              <div className="text-center py-20 border border-border/50 rounded-xl bg-bg-card">
+                <p className="text-text-muted font-mono text-sm mb-3">
+                  No results for &quot;{query}&quot;
+                </p>
+                <p className="text-text-muted text-xs mb-4">Try different keywords or browse by category.</p>
+                <NextLink href="/category/writing" className="btn-ghost text-xs">
+                  Browse categories
+                </NextLink>
+              </div>
             </ScrollReveal>
-          ))}
-        </div>
+          )}
+        </>
       ) : (
         <ScrollReveal>
           <div className="text-center py-20 border border-border/50 rounded-xl bg-bg-card">
             <p className="text-text-muted font-mono text-sm mb-3">
-              {query ? `No results for "${query}"` : "Type above to search"}
+              🔍 Search 124+ curated prompts
             </p>
-            <NextLink href="/category/writing" className="btn-ghost text-xs">
-              Browse categories
-            </NextLink>
+            <p className="text-text-muted text-xs">
+              Type a keyword above — e.g. &quot;resume&quot;, &quot;Midjourney&quot;, &quot;cold email&quot;
+            </p>
           </div>
         </ScrollReveal>
       )}

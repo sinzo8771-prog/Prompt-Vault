@@ -84,8 +84,8 @@ export default async function HomePage() {
 
           {/* Right Column / Cards Grid */}
           <div className="w-full md:flex-1 grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {categories.slice(0, 4).map((cat, i) => (
-              <ScrollReveal key={cat.slug} delay={i * 100}>
+            {categories.map((cat, i) => (
+              <ScrollReveal key={cat.slug} delay={i * 80}>
                 <CategoryCard category={cat} index={i} />
               </ScrollReveal>
             ))}
@@ -184,10 +184,10 @@ export default async function HomePage() {
       <section className="py-20 bg-[var(--color-surface-light)] border-y border-[var(--color-hairline)]">
         <div className="max-w-7xl mx-auto px-12 grid grid-cols-2 lg:grid-cols-4 gap-12">
           {[
-            { value: "12,400+", label: "Verified Prompts" },
-            { value: "1.2M", label: "Monthly Executions" },
-            { value: "99.2%", label: "Response Accuracy" },
-            { value: "24/7", label: "Oracle Availability" },
+            { value: `${allPrompts.length}+`, label: "Curated Prompts" },
+            { value: `${categories.length}`, label: "Categories" },
+            { value: "6", label: "AI Tools Supported" },
+            { value: "Free", label: "Always" },
           ].map((stat) => (
             <ScrollReveal key={stat.label}>
               <div className="text-center group">
