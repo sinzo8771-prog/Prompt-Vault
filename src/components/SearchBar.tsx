@@ -22,15 +22,27 @@ export function SearchBar() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (query.trim()) {
-      router.push(`/search?q=${encodeURIComponent(query.trim())}`);
-    }
+    const next = query.trim();
+    if (!next) return;
+    setIsFocused(false);
+    router.push(`/search?q=${encodeURIComponent(next)}`);
   };
 
   const handleSuggestionClick = (suggestion: string) => {
     setQuery(suggestion);
+    setIsFocused(false);
     router.push(`/search?q=${encodeURIComponent(suggestion)}`);
   };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Escape") {
+      e.preventDefault();
+      setQuery("");
+      setIsFocused(false);
+    }
+  };
+
+  const shouldShowSuggestions = isFocused && query.trim().length < 2;
 
   return (
     <div className="relative w-full">
@@ -48,7 +60,7 @@ export function SearchBar() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onFocus={() => setIsFocused(true)}
-            onBlur={() => setTimeout(() => setIsFocused(false), 200)}
+            onKeyDown={handleKeyDown}
             placeholder="I need a prompt for..."
             className="w-full bg-transparent border-none outline-hidden text-white px-8 py-6 text-2xl placeholder:text-white/20 font-light tracking-tight focus:ring-0 focus:outline-hidden"
           />
@@ -65,7 +77,7 @@ export function SearchBar() {
 
       {/* Suggestions dropdown */}
       <AnimatePresence>
-        {isFocused && !query && (
+        {shouldShowSuggestions && (
           <motion.div
             initial={{ opacity: 0, y: -10, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
