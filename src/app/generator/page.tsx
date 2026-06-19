@@ -39,16 +39,45 @@ export default function GeneratorPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [copied, setCopied] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [formErrors, setFormErrors] = useState({
+    goal: "",
+    api: ""
+  });
+
+  const validateForm = useCallback(() => {
+    const errors = { goal: "", api: "" };
+
+    if (!goal.trim()) {
+      errors.goal = "Please describe what you want the prompt to do.";
+    } else if (goal.trim().length < 20) {
+      errors.goal = "Be more specific (at least 20 characters). Include audience, format, and key points.";
+    } else {
+      errors.goal = "";
+    }
+
+    setFormErrors(errors);
+    return !errors.goal && !errors.api;
+  }, [goal]);
 
   const handleGenerate = useCallback(async () => {
-    if (!goal.trim()) {
-      setError("Please describe what you want the prompt to do.");
+    // Validate form before proceeding
+    if (!validateForm()) {
       return;
     }
 
     setLoading(true);
     setError("");
     setOutput("");
+    setProgress(0);
+
+    // Start progress indicator
+    const progressInterval = setInterval(() => {
+      setProgress(prev => {
+        if (prev >= 90) return 90; // Don't jump to 100% too fast
+        return prev + Math.random() * 15;
+      });
+    }, 1000);
 
     try {
       const response = fetch("/api/generate", {
@@ -83,9 +112,13 @@ export default function GeneratorPage() {
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to generate prompt. Please try again.");
     } finally {
+      clearInterval(progressInterval);
+      setProgress(100);
       setLoading(false);
+      // Reset progress after a delay
+      setTimeout(() => setProgress(0), 2000);
     }
-  }, [goal, selectedTool, selectedCategory, selectedTone]);
+  }, [goal, selectedTool, selectedCategory, selectedTone, validateForm]);
 
   const handleCopy = useCallback(async () => {
     if (!output) return;
@@ -133,6 +166,22 @@ export default function GeneratorPage() {
             <div className="mb-6 p-4 bg-error/10 border border-error/30 rounded-xl flex items-center gap-3">
               <span className="text-error">⚠️</span>
               <p className="text-sm text-error">{error}</p>
+            </div>
+          )}
+
+          {/* Progress Bar */}
+          {loading && progress > 0 && (
+            <div className="mb-6">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs text-text-muted">Generating prompt...</span>
+                <span className="text-xs text-accent font-mono">{progress}%</span>
+              </div>
+              <div className="w-full h-2 bg-bg border border-border/50 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-gradient-to-r from-accent to-accent-hover transition-all duration-300 ease-out"
+                  style={{ width: `${progress}%` }}
+                />
+              </div>
             </div>
           )}
 
@@ -188,10 +237,15 @@ export default function GeneratorPage() {
             <textarea
               placeholder="E.g., Write a cold email sequence for a B2B SaaS product targeting HR managers. The email should focus on pain points around employee retention..."
               value={goal}
-              onChange={(e) => { setGoal(e.target.value); setError(""); }}
-              className="w-full h-36 px-4 py-3 bg-bg border border-border/50 rounded-xl text-sm text-text placeholder:text-text-muted focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/20 transition-all resize-none font-mono"
+              onChange={(e) => { setGoal(e.target.value); setError(""); setFormErrors(prev => ({ ...prev, goal: "" })); }}
+              className={`w-full h-36 px-4 py-3 bg-bg border rounded-xl text-sm text-text placeholder:text-text-muted focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/20 transition-all resize-none font-mono ${formErrors.goal ? "border-red-500 bg-red-500/5" : "border-border/50"}`}
             />
             <p className="text-xs text-text-muted mt-2">Be specific for better results. Include audience, format, and key points.</p>
+            {formErrors.goal && (
+              <p className="text-xs text-red-500 mt-1 flex items-center gap-1">
+                <span>⚠️</span> {formErrors.goal}
+              </p>
+            )}
           </div>
 
           {/* Tone */}

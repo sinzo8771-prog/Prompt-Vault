@@ -39,6 +39,7 @@ export function Header() {
       }
       if (e.key === "Escape") {
         setSearchOpen(false);
+        setMobileOpen(false); // Close mobile menu on escape
       }
     };
 
