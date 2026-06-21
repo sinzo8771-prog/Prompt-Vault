@@ -4,6 +4,7 @@ import { useRef } from "react";
 import Link from "next/link";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import type { Prompt } from "@/lib/prompts";
+import { toSlug } from "@/lib/prompts";
 import { CopyButton } from "./CopyButton";
 import { SaveButton } from "./SaveButton";
 import { Sparkles } from "lucide-react";

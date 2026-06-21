@@ -13,6 +13,8 @@ export interface Prompt {
   tags: string[];
   copyCount: number;
   createdAt: string;
+  rating?: number;       // 1-5 star rating
+  upvotes?: number;       // raw upvote count (local data)
 }
 
 export interface Category {
@@ -60,6 +62,9 @@ function extractNumber(rec: { properties: NotionProperties }, name: string): num
 }
 
 function toPrompt(rec: { id: string; created_time: string; properties: NotionProperties }): Prompt {
+  const upvotes = extractNumber(rec, "Upvotes");
+  // Normalize upvotes to a 1-5 rating (log scale: 0→1, 50→2, 200→3, 800→4, 2000+→5)
+  const rating = upvotes <= 0 ? undefined : Math.min(5, Math.max(1, Math.round(1 + Math.log10(upvotes + 1) * 1.8)));
   return {
     id: rec.id,
     slug: extractRichText(rec, "Slug"),
@@ -70,6 +75,8 @@ function toPrompt(rec: { id: string; created_time: string; properties: NotionPro
     tags: extractMultiSelect(rec, "Tags"),
     copyCount: extractNumber(rec, "CopyCount"),
     createdAt: rec.created_time,
+    rating,
+    upvotes,
   };
 }
 
@@ -117,7 +124,7 @@ async function queryDataSource(
 // ─── Helpers ────────────────────────────────────────────────
 
 /** Normalize a category name (e.g. "AI & Automation") to a URL slug (e.g. "ai-and-automation") */
-function toSlug(name: string): string {
+export function toSlug(name: string): string {
   return name
     .toLowerCase()
     .replace(/&/g, "and")

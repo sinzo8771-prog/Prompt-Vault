@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { getPromptBySlug, getAllPrompts } from "@/lib/prompts";
+import { getPromptBySlug, getAllPrompts, toSlug } from "@/lib/prompts";
 import { CopyButton } from "@/components/CopyButton";
 import { SaveButton } from "@/components/SaveButton";
 import { PromptCard } from "@/components/PromptCard";
@@ -32,7 +32,7 @@ export default async function PromptDetailPage({ params }: { params: Promise<{ s
   if (!prompt) notFound();
 
   const all = await getAllPrompts();
-  const related = all.filter((p) => p.category === prompt.category && p.id !== prompt.id).slice(0, 4);
+  const related = all.filter((p) => toSlug(p.category) === toSlug(prompt.category) && p.id !== prompt.id).slice(0, 4);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -53,8 +53,8 @@ export default async function PromptDetailPage({ params }: { params: Promise<{ s
           <nav className="flex items-center gap-2 text-xs font-mono text-text-muted mb-10">
             <Link href="/" className="hover:text-accent transition-colors">Home</Link>
              <span>/</span>
-               <Link href={`/category/${prompt.category}`} className="hover:text-accent transition-colors capitalize">
-               {prompt.category.replace(/-/g, " ")}
+               <Link href={`/category/${toSlug(prompt.category)}`} className="hover:text-accent transition-colors">
+               {prompt.category}
              </Link>
             <span>/</span>
             <span className="text-text-secondary line-clamp-1">{prompt.title}</span>
