@@ -5,6 +5,7 @@ import { CopyButton } from "@/components/CopyButton";
 import { SaveButton } from "@/components/SaveButton";
 import { PromptCard } from "@/components/PromptCard";
 import { ScrollReveal } from "@/components/ScrollReveal";
+import { AffiliateCTAs } from "@/components/AffiliateCTAs";
 
 export const revalidate = 60;
 
@@ -14,17 +15,6 @@ export async function generateStaticParams() {
 }
 
 export const metadata = { title: "Prompt", description: "AI prompt from PromptVault." };
-
-const toolAffiliate: Record<string, { url: string; label: string }> = {
-  ChatGPT: { url: "https://chat.openai.com/?model=auto", label: "Try in ChatGPT" },
-  Midjourney: { url: "https://midjourney.com/membership/", label: "Get Midjourney" },
-  Claude: { url: "https://claude.ai/?model=auto", label: "Try in Claude" },
-  Gemini: { url: "https://gemini.google.com/app", label: "Try in Gemini" },
-  Copilot: { url: "https://github.com/features/copilot", label: "Get Copilot" },
-  DeepSeek: { url: "https://chat.deepseek.com/", label: "Try in DeepSeek" },
-  Coding: { url: "https://github.com/features/copilot", label: "Get Copilot" },
-  Other: { url: "https://chat.openai.com/?model=auto", label: "Try in ChatGPT" },
-};
 
 export default async function PromptDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -47,109 +37,111 @@ export default async function PromptDetailPage({ params }: { params: Promise<{ s
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
-      <div className="max-w-4xl mx-auto px-6 lg:px-8 py-24 pt-32">
+      <article className="max-w-3xl mx-auto px-5 sm:px-8 py-20 sm:py-28 pt-28 sm:pt-36">
+
         {/* Breadcrumb */}
         <ScrollReveal>
-          <nav className="flex items-center gap-2 text-xs font-mono text-text-muted mb-10">
+          <nav className="flex items-center gap-2 text-xs font-mono text-text-muted mb-8 sm:mb-12">
             <Link href="/" className="hover:text-accent transition-colors">Home</Link>
-             <span>/</span>
-               <Link href={`/category/${toSlug(prompt.category)}`} className="hover:text-accent transition-colors">
-               {prompt.category}
-             </Link>
-            <span>/</span>
+            <span className="text-border">/</span>
+            <Link href={`/category/${toSlug(prompt.category)}`} className="hover:text-accent transition-colors">
+              {prompt.category}
+            </Link>
+            <span className="text-border">/</span>
             <span className="text-text-secondary line-clamp-1">{prompt.title}</span>
           </nav>
         </ScrollReveal>
 
         {/* Header */}
         <ScrollReveal delay={50}>
-          <div className="mb-10">
-            <h1 className="display-2 mb-5">
-              {prompt.title}
-            </h1>
-            <div className="flex flex-wrap items-center gap-3 mb-4">
-              <span className="text-xs font-mono font-bold px-2.5 py-1 bg-accent/10 border border-accent/20 text-accent rounded-md uppercase tracking-wider">
+          <header className="mb-10 sm:mb-14">
+            <div className="flex flex-wrap items-center gap-2 mb-5">
+              <Link
+                href={`/category/${toSlug(prompt.category)}`}
+                className="text-[11px] font-mono font-bold px-2.5 py-1 bg-accent/8 border border-accent/15 text-accent rounded-md uppercase tracking-wider hover:bg-accent/15 transition-colors"
+              >
+                {prompt.category}
+              </Link>
+              <span className="text-[11px] font-mono font-bold px-2.5 py-1 bg-bg-card border border-border/50 text-text-muted rounded-md uppercase tracking-wider">
                 {prompt.aiTool}
               </span>
-              <Link
-                 href={`/category/${prompt.category}`}
-                 className="text-xs font-mono text-text-muted hover:text-accent transition-colors capitalize"
-               >
-                {prompt.category.replace(/-/g, " ")}
-              </Link>
             </div>
-            <div className="flex items-center gap-4 text-xs font-mono text-text-muted">
-              <span>{prompt.copyCount.toLocaleString()} copies</span>
-              <span>·</span>
-              <span>{prompt.createdAt}</span>
+
+            <h1 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold leading-[1.15] tracking-tight text-text mb-6">
+              {prompt.title}
+            </h1>
+
+            <div className="flex items-center gap-3 text-sm font-mono text-text-muted">
+              <span className="flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-success" />
+                {prompt.copyCount.toLocaleString()} copies
+              </span>
+              <span className="text-border">·</span>
+              <time dateTime={prompt.createdAt}>{prompt.createdAt}</time>
+              {prompt.tags.length > 0 && (
+                <>
+                  <span className="text-border">·</span>
+                  <span>{prompt.tags.length} tags</span>
+                </>
+              )}
             </div>
-          </div>
+          </header>
         </ScrollReveal>
 
-        {/* Code Block */}
+        {/* Divider */}
+        <div className="divider mb-10 sm:mb-14" />
+
+        {/* Prompt Body */}
         <ScrollReveal delay={100}>
-          <div className="mb-10">
-            <div className="flex items-center justify-between px-4 py-3 border border-border/50 border-b-0 rounded-t-xl bg-bg-card/50">
-              <span className="text-xs font-mono uppercase tracking-wider text-text-muted">Prompt</span>
+          <section className="mb-10 sm:mb-14">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="label">Prompt</h2>
               <div className="flex items-center gap-2">
                 <SaveButton prompt={prompt} />
                 <CopyButton text={prompt.body} />
               </div>
             </div>
-            <div className="code-block rounded-t-none border-t-0" style={{ marginLeft: 0, paddingLeft: "1.5rem" }}>
-              <pre className="text-sm font-mono whitespace-pre-wrap leading-relaxed text-text-secondary">
+            <div className="bg-bg-card border border-border/60 rounded-2xl p-6 sm:p-8 lg:p-10">
+              <p className="text-base sm:text-lg leading-[1.8] text-text-secondary whitespace-pre-wrap font-[450]">
                 {prompt.body}
-              </pre>
+              </p>
             </div>
-          </div>
+          </section>
         </ScrollReveal>
 
         {/* Tags */}
-        <ScrollReveal delay={150}>
-          <div className="flex flex-wrap gap-2 mb-10">
-            {prompt.tags.map((tag) => (
-              <Link
-                 key={tag}
-                 href={`/search?q=${encodeURIComponent(tag)}`}
-                className="text-xs font-mono text-text-muted px-3 py-1.5 bg-bg-card border border-border/50 rounded-lg hover:border-accent/30 hover:text-accent transition-all"
-              >
-                {tag}
-               </Link>
-             ))}
-          </div>
-        </ScrollReveal>
-
-        {/* Affiliate CTA */}
-        {toolAffiliate[prompt.aiTool] && (
-          <ScrollReveal delay={200}>
-            <div className="p-6 bg-gradient-to-r from-accent/5 to-transparent border border-accent/20 rounded-xl mb-12">
-              <div className="flex items-center justify-between gap-4 flex-wrap">
-                <div>
-                  <p className="text-sm font-semibold text-text mb-1">{toolAffiliate[prompt.aiTool].label}</p>
-                  <p className="text-xs text-text-muted font-mono">Best results with {prompt.aiTool}&apos;s latest model</p>
-                </div>
-                <a
-                  href={toolAffiliate[prompt.aiTool].url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn-magnetic shrink-0 !py-3 !px-6 text-sm"
-                >
-                  <span>{toolAffiliate[prompt.aiTool].label} →</span>
-                </a>
+        {prompt.tags.length > 0 && (
+          <ScrollReveal delay={150}>
+            <section className="mb-10 sm:mb-14">
+              <h2 className="label mb-4">Tags</h2>
+              <div className="flex flex-wrap gap-2">
+                {prompt.tags.map((tag) => (
+                  <Link
+                    key={tag}
+                    href={`/search?q=${encodeURIComponent(tag)}`}
+                    className="text-sm font-mono text-text-muted px-3.5 py-2 bg-bg-card border border-border/50 rounded-lg hover:border-accent/30 hover:text-accent transition-all"
+                  >
+                    #{tag}
+                  </Link>
+                ))}
               </div>
-              <p className="text-[10px] font-mono text-text-muted mt-3 pt-3 border-t border-border/30">
-                Affiliate link — we may earn a commission at no extra cost to you.
-              </p>
-            </div>
+            </section>
           </ScrollReveal>
         )}
+
+        {/* Affiliate CTAs */}
+        <ScrollReveal delay={200}>
+          <AffiliateCTAs aiTool={prompt.aiTool} category={prompt.category} />
+        </ScrollReveal>
 
         {/* Related */}
         {related.length > 0 && (
           <ScrollReveal>
-            <section className="border-t border-border/50 pt-12">
-              <p className="label mb-2">Related</p>
-              <h2 className="heading-lg mb-8">Similar prompts</h2>
+            <section className="border-t border-border/50 pt-10 sm:pt-14">
+              <div className="mb-8">
+                <h2 className="label mb-2">Related</h2>
+                <p className="heading-lg">More in {prompt.category}</p>
+              </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {related.map((p) => (
                   <PromptCard key={p.id} prompt={p} />
@@ -158,7 +150,8 @@ export default async function PromptDetailPage({ params }: { params: Promise<{ s
             </section>
           </ScrollReveal>
         )}
-      </div>
+
+      </article>
     </>
   );
 }
