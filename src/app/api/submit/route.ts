@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { title, description, prompt, category, tags } = body;
+    const { title, prompt, category } = body;
 
     if (!title || !prompt || !category) {
       return NextResponse.json(

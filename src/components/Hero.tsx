@@ -114,9 +114,8 @@ export function Hero({}: HeroProps) {
 
       {/* Floating Mockup Cards (Deep Twilight aesthetic) */}
         <motion.div
-          style={{ y: yFloating1, opacity: opacityFloating }}
+          style={{ y: yFloating1, opacity: opacityFloating, "--rot": "-3deg" } as unknown as CSSProperties}
           className="absolute top-[20%] -left-16 w-80 h-48 frosted-glass rounded-[24px] p-8 animate-float hidden xl:block pointer-events-none"
-          custom={{ "--rot": "-3deg" } as CSSProperties}
         >
         <div className="w-12 h-1.5 bg-white/20 rounded-full mb-4" />
         <div className="space-y-2">
@@ -131,9 +130,8 @@ export function Hero({}: HeroProps) {
       </motion.div>
 
       <motion.div
-        style={{ y: yFloating2, opacity: opacityFloating }}
+        style={{ y: yFloating2, opacity: opacityFloating, "--rot": "4deg" } as unknown as CSSProperties}
         className="absolute bottom-[20%] -right-16 w-88 h-56 frosted-glass rounded-[24px] p-8 animate-float hidden xl:block pointer-events-none"
-        custom={{ "--rot": "4deg" } as CSSProperties}
       >
         <div className="flex items-center gap-3 mb-6">
           <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center">
