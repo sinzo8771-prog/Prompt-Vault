@@ -3,11 +3,11 @@
 import { useRef } from "react";
 import Link from "next/link";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
-import type { Prompt } from "@/lib/prompts";
+import type { Prompt } from "@/lib/types";
 import { toSlug } from "@/lib/prompts";
 import { CopyButton } from "./CopyButton";
 import { SaveButton } from "./SaveButton";
-import { Sparkles } from "lucide-react";
+import { Sparkles, Star } from "lucide-react";
 
 export function PromptCard({
   prompt,
@@ -77,9 +77,17 @@ export function PromptCard({
           </p>
 
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-mono text-[var(--color-on-surface-muted)] uppercase tracking-wider">
-              {prompt.copyCount.toLocaleString()} copies
-            </span>
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-mono text-[var(--color-on-surface-muted)] uppercase tracking-wider">
+                {prompt.copyCount.toLocaleString()} copies
+              </span>
+              {prompt.rating != null && (
+                <span className="flex items-center gap-0.5 text-[10px] font-mono text-amber-500">
+                  <Star className="w-2.5 h-2.5 fill-amber-400 text-amber-400" />
+                  {prompt.rating.toFixed(1)}
+                </span>
+              )}
+            </div>
             <div className="flex items-center gap-2">
               <SaveButton prompt={prompt} />
               <CopyButton text={prompt.body} />
@@ -148,14 +156,20 @@ export function PromptCard({
 
         {/* Footer */}
         <div className="flex items-center justify-between pt-8 border-t border-[var(--color-hairline)] mt-auto">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <Sparkles className="w-4 h-4 text-[var(--color-primary)]" />
             <div className="flex flex-col">
               <span className="text-[10px] uppercase tracking-widest opacity-40 leading-none mb-1">Executions</span>
               <span className="text-sm font-bold leading-none">{prompt.copyCount.toLocaleString()}</span>
             </div>
           </div>
-          <div className="flex gap-3">
+          <div className="flex items-center gap-3">
+            {prompt.rating != null && (
+              <span className="flex items-center gap-1 text-[10px] font-mono text-amber-500">
+                <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
+                {prompt.rating.toFixed(1)}
+              </span>
+            )}
             <SaveButton prompt={prompt} />
             <CopyButton text={prompt.body} />
           </div>

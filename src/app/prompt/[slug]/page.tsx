@@ -14,7 +14,22 @@ export async function generateStaticParams() {
   return prompts.map((p) => ({ slug: p.slug }));
 }
 
-export const metadata = { title: "Prompt", description: "AI prompt from PromptVault." };
+function buildMetaDescription(prompt: { title: string; body: string; category: string; aiTool: string; metaDescription?: string }): string {
+  if (prompt.metaDescription) return prompt.metaDescription.slice(0, 160);
+  return `${prompt.title} — a ${prompt.aiTool} prompt for ${prompt.category}. ${prompt.body.slice(0, 120)}`.slice(0, 160);
+}
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const prompt = await getPromptBySlug(slug);
+  if (!prompt) return { title: "Prompt Not Found", description: "This prompt does not exist." };
+  const description = buildMetaDescription(prompt);
+  return {
+    title: `${prompt.title} — ${prompt.aiTool} Prompt`,
+    description,
+    openGraph: { title: `${prompt.title} — PromptVault`, description, type: "article" as const },
+  };
+}
 
 export default async function PromptDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -24,11 +39,13 @@ export default async function PromptDetailPage({ params }: { params: Promise<{ s
   const all = await getAllPrompts();
   const related = all.filter((p) => toSlug(p.category) === toSlug(prompt.category) && p.id !== prompt.id).slice(0, 4);
 
+  const metaDesc = buildMetaDescription(prompt);
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Article",
     headline: prompt.title,
-    description: prompt.body.slice(0, 160),
+    description: metaDesc,
     datePublished: prompt.createdAt,
     author: { "@type": "Organization", name: "PromptVault" },
   };

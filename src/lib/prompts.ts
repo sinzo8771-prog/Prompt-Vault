@@ -2,29 +2,9 @@ import "server-only";
 
 import { notion, hasNotion } from "./notion";
 import { prompts as localPrompts, categories as localCategories } from "@/data/prompts";
+import type { Prompt, Category, SearchFilters } from "./types";
 
-export interface Prompt {
-  id: string;
-  slug: string;
-  title: string;
-  body: string;
-  aiTool: string;
-  category: string;
-  tags: string[];
-  copyCount: number;
-  createdAt: string;
-  rating?: number;       // 1-5 star rating
-  upvotes?: number;       // raw upvote count (local data)
-}
-
-export interface Category {
-  slug: string;
-  name: string;
-  description: string;
-  icon: string;
-  promptCount: number;
-  color: string;
-}
+export type { Prompt, Category, SearchFilters };
 
 // ── Notion Helpers ──────────────────────────────────────────
 
@@ -65,16 +45,22 @@ function toPrompt(rec: { id: string; created_time: string; properties: NotionPro
   const upvotes = extractNumber(rec, "Upvotes");
   // Normalize upvotes to a 1-5 rating (log scale: 0→1, 50→2, 200→3, 800→4, 2000+→5)
   const rating = upvotes <= 0 ? undefined : Math.min(5, Math.max(1, Math.round(1 + Math.log10(upvotes + 1) * 1.8)));
+  const title = extractTitle(rec, "Name");
+  const body = extractRichText(rec, "Body");
+  const category = extractSelect(rec, "Category");
+  const aiTool = extractSelect(rec, "AI Tool");
+  const metaDesc = extractRichText(rec, "MetaDescription");
   return {
     id: rec.id,
     slug: extractRichText(rec, "Slug"),
-    title: extractTitle(rec, "Name"),
-    body: extractRichText(rec, "Body"),
-    aiTool: extractSelect(rec, "AI Tool"),
-    category: extractSelect(rec, "Category"),
+    title,
+    body,
+    aiTool,
+    category,
     tags: extractMultiSelect(rec, "Tags"),
     copyCount: extractNumber(rec, "CopyCount"),
     createdAt: rec.created_time,
+    metaDescription: metaDesc || `${title} — ${aiTool} prompt for ${category}. ${body.slice(0, 120)}...`,
     rating,
     upvotes,
   };
@@ -250,6 +236,38 @@ export async function searchPrompts(query: string): Promise<Prompt[]> {
       p.body.toLowerCase().includes(q) ||
       p.tags.some((t) => t.toLowerCase().includes(q))
   );
+}
+
+
+export async function searchPromptsWithFilters(
+  query: string,
+  filters: SearchFilters
+): Promise<Prompt[]> {
+  let results = await searchPrompts(query);
+
+  if (filters.category && filters.category !== "all") {
+    results = results.filter((p) => toSlug(p.category) === filters.category);
+  }
+  if (filters.aiTool && filters.aiTool !== "all") {
+      results = results.filter((p) => p.aiTool.toLowerCase() === filters.aiTool!.toLowerCase());
+    }
+  if (filters.minRating && filters.minRating > 0) {
+    // Rating filter — no-op since rating/upvotes fields were removed
+    // Kept for API compatibility with SearchFilters interface
+  }
+
+  return results;
+}
+
+export async function getAiTools(): Promise<string[]> {
+  const prompts = await getAllPrompts();
+  const tools = new Set(prompts.map((p) => p.aiTool).filter(Boolean));
+  return Array.from(tools).sort();
+}
+
+export function getUniqueCategoriesFromPrompts(prompts: Prompt[]): string[] {
+  const cats = new Set(prompts.map((p) => p.category).filter(Boolean));
+  return Array.from(cats).sort();
 }
 
 export async function getCategories(): Promise<Category[]> {
