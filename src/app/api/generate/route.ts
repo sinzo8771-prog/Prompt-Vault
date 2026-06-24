@@ -155,7 +155,7 @@ async function callOpenRouterWithTimeout(
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: *** ${apiKey}`,
+        Authorization: Bearer ${apiKey}`,
         "HTTP-Referer": process.env.SITE_URL || "https://promptvault.com",
         "X-Title": "PromptVault Generator",
       },
