@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 
-// In-memory rate limiter
+// Rate limiter — sliding window with periodic cleanup
+// Note: In-memory only; on serverless (Vercel) this resets per instance.
+// For production scale, use Upstash Redis or similar.
 const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
 
 const RATE_LIMIT = 10; // requests per window
@@ -24,12 +26,18 @@ function getRateLimit(ip: string): { allowed: boolean; remaining: number; resetI
   return { allowed: true, remaining: RATE_LIMIT - record.count, resetIn: record.resetTime - now };
 }
 
-setInterval(() => {
+// Cleanup every 5 minutes (lazy — also cleans on each check above)
+const rateCleanupInterval = setInterval(() => {
   const now = Date.now();
   for (const [ip, record] of rateLimitMap.entries()) {
     if (now > record.resetTime) rateLimitMap.delete(ip);
   }
-}, 60000);
+}, 5 * 60 * 1000);
+
+// Prevent interval from keeping Node.js process alive in serverless
+if (typeof rateCleanupInterval === "object" && "unref" in rateCleanupInterval) {
+  (rateCleanupInterval as NodeJS.Timeout).unref();
+}
 
 interface GenerateRequest {
   tool: string;
@@ -122,7 +130,7 @@ const CATEGORIES_CONTEXT: Record<string, string> = {
   "Sales & CRM": "Discovery calls, outreach sequences, deal strategy, churn prevention, proposal writing, LinkedIn selling.",
 };
 
-// Verified working free models
+// Verified working free models — ordered by speed/cost
 const MODELS = [
   "openai/gpt-oss-120b:free",
   "openai/gpt-oss-20b:free",
@@ -132,19 +140,24 @@ const MODELS = [
   "google/gemma-4-31b-it:free",
 ];
 
-async function callOpenRouter(
-  apiKey: string,
+const MODEL_TIMEOUT = 15000; // 15s per model attempt
+
+async function callOpenRouterWithTimeout(
+  apiKey: <REDACTED>
   model: string,
   systemPrompt: string,
   userPrompt: string
 ): Promise<string | null> {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), MODEL_TIMEOUT);
+
   try {
     const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${apiKey}`,
-        "HTTP-Referer": "https://promptvault.com",
+        "HTTP-Referer": process.env.SITE_URL || "https://promptvault.com",
         "X-Title": "PromptVault Generator",
       },
       body: JSON.stringify({
@@ -156,7 +169,10 @@ async function callOpenRouter(
         temperature: 0.7,
         max_tokens: 800,
       }),
+      signal: controller.signal,
     });
+
+    clearTimeout(timeout);
 
     if (response.status === 429) return null;
     if (!response.ok) return null;
@@ -164,7 +180,6 @@ async function callOpenRouter(
     const data = await response.json();
     let content = data.choices?.[0]?.message?.content?.trim() || null;
 
-    // Clean up common prefixes the model might add
     if (content) {
       content = content
         .replace(/^["']|["']$/g, "")
@@ -176,6 +191,7 @@ async function callOpenRouter(
 
     return content;
   } catch {
+    clearTimeout(timeout);
     return null;
   }
 }
@@ -223,14 +239,33 @@ ${langNote}
 
 Generate ONLY the prompt text (no explanations, no quotes, no markdown):`;
 
-    // Try models until one works
+    // Try models: first 3 in parallel, then fallback to remaining
     let generatedPrompt: string | null = null;
     let usedModel = "";
-    for (const model of MODELS) {
-      generatedPrompt = await callOpenRouter(apiKey, model, SYSTEM_PROMPT, userPrompt);
-      if (generatedPrompt) {
-        usedModel = model;
-        break;
+
+    const primaryModels = MODELS.slice(0, 3);
+    const fallbackModels = MODELS.slice(3);
+
+    // Race first 3 models — fastest wins
+    const primaryResult = await Promise.any(
+      primaryModels.map(async (model) => {
+        const result = await callOpenRouterWithTimeout(apiKey, model, SYSTEM_PROMPT, userPrompt);
+        if (!result) throw new Error(`${model} failed`);
+        return { result, model };
+      })
+    ).catch(() => null);
+
+    if (primaryResult) {
+      generatedPrompt = primaryResult.result;
+      usedModel = primaryResult.model;
+    } else {
+      // Fallback: try remaining models sequentially
+      for (const model of fallbackModels) {
+        generatedPrompt = await callOpenRouterWithTimeout(apiKey, model, SYSTEM_PROMPT, userPrompt);
+        if (generatedPrompt) {
+          usedModel = model;
+          break;
+        }
       }
     }
 

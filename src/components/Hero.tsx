@@ -10,7 +10,7 @@ interface HeroProps {
   promptCount: number;
 }
 
-export function Hero({}: HeroProps) {
+export function Hero({ promptCount }: HeroProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -68,7 +68,7 @@ export function Hero({}: HeroProps) {
         >
           <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-primary)] animate-pulse" />
           <span className="text-white/60 text-[10px] font-bold uppercase tracking-[0.2em]">
-            Redesign 2.0: Deep Twilight Phase
+            {promptCount}+ Prompts · Deep Twilight Phase
           </span>
         </motion.div>
 

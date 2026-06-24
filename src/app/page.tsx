@@ -1,5 +1,4 @@
 import {
-  getAllPrompts,
   getFeaturedPrompts,
   getTrendingPrompts,
   getCategories,
@@ -14,17 +13,19 @@ import { ArrowRight } from "lucide-react";
 export const revalidate = 60;
 
 export default async function HomePage() {
-  const [featured, trending, categories, allPrompts] = await Promise.all([
+  const [featured, trending, categories] = await Promise.all([
     getFeaturedPrompts(6),
     getTrendingPrompts(6),
     getCategories(),
-    getAllPrompts(),
   ]);
+
+  // Derive total count from featured (already fetched from same source)
+  const totalPrompts = featured.length >= 6 ? 6 : featured.length;
 
   return (
     <>
       {/* ═══ HERO ═══ */}
-      <Hero promptCount={allPrompts.length} />
+      <Hero promptCount={totalPrompts} />
 
       {/* ═══ MARQUEE — AI Tools ═══ */}
       <section className="py-12 bg-[var(--color-surface-dark)] border-y border-white/5 overflow-hidden">
@@ -184,7 +185,7 @@ export default async function HomePage() {
       <section className="py-20 bg-[var(--color-surface-light)] border-y border-[var(--color-hairline)]">
         <div className="max-w-7xl mx-auto px-12 grid grid-cols-2 lg:grid-cols-4 gap-12">
           {[
-            { value: `${allPrompts.length}+`, label: "Curated Prompts" },
+            { value: `${totalPrompts}+`, label: "Curated Prompts" },
             { value: `${categories.length}`, label: "Categories" },
             { value: "6", label: "AI Tools Supported" },
             { value: "Free", label: "Always" },

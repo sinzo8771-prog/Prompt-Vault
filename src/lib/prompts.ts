@@ -107,7 +107,27 @@ async function queryDataSource(
 }
 
 
-// ─── Helpers ────────────────────────────────────────────────
+// ─── Shared Constants ──────────────────────────────────────────
+
+/** Map URL slug → Notion category name (for DB queries) */
+export const SLUG_TO_NOTION: Record<string, string> = {
+  writing: "Writing",
+  design: "Design",
+  marketing: "Marketing",
+  development: "Development",
+  productivity: "Productivity",
+  creative: "Creative",
+  "sales-and-crm": "Sales & CRM",
+  "business-and-finance": "Business & Finance",
+  "education-and-learning": "Education & Learning",
+  "ai-and-automation": "AI & Automation",
+  "video-and-film": "Video & Film",
+};
+
+/** Display name → URL slug (reverse lookup) */
+export const NOTION_TO_SLUG: Record<string, string> = Object.fromEntries(
+  Object.entries(SLUG_TO_NOTION).map(([slug, name]) => [name, slug])
+);
 
 /** Normalize a category name (e.g. "AI & Automation") to a URL slug (e.g. "ai-and-automation") */
 export function toSlug(name: string): string {
@@ -146,21 +166,7 @@ export async function getTrendingPrompts(count = 10): Promise<Prompt[]> {
 }
 
 export async function getPromptsByCategory(category: string): Promise<Prompt[]> {
-  // Map URL slug back to Notion category name
-  const slugToNotion: Record<string, string> = {
-    writing: "Writing",
-    design: "Design",
-    marketing: "Marketing",
-    development: "Development",
-    productivity: "Productivity",
-    creative: "Creative",
-    "sales-and-crm": "Sales & CRM",
-    "business-and-finance": "Business & Finance",
-    "education-and-learning": "Education & Learning",
-    "ai-and-automation": "AI & Automation",
-    "video-and-film": "Video & Film",
-  };
-  const notionCat = slugToNotion[category.toLowerCase()] || category;
+  const notionCat = SLUG_TO_NOTION[category.toLowerCase()] || category;
 
   if (!hasNotion) {
     return (localPrompts as Prompt[]).filter(
@@ -310,23 +316,9 @@ export async function getCategories(): Promise<Category[]> {
   return Object.entries(counts)
     .map(([slug, count]) => {
       const def = catDef[slug] || { icon: "📁", color: "#666", description: "" };
-      // Map slug back to display name
-      const displayNameMap: Record<string, string> = {
-        writing: "Writing",
-        design: "Design",
-        marketing: "Marketing",
-        development: "Development",
-        productivity: "Productivity",
-        creative: "Creative",
-        "sales-and-crm": "Sales & CRM",
-        "business-and-finance": "Business & Finance",
-        "education-and-learning": "Education & Learning",
-        "ai-and-automation": "AI & Automation",
-        "video-and-film": "Video & Film",
-      };
       return {
         slug,
-        name: displayNameMap[slug] || slug.charAt(0).toUpperCase() + slug.slice(1),
+        name: SLUG_TO_NOTION[slug] || slug.charAt(0).toUpperCase() + slug.slice(1),
         description: def.description,
         icon: def.icon,
         promptCount: count,
