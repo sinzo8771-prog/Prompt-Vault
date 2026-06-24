@@ -143,7 +143,7 @@ const MODELS = [
 const MODEL_TIMEOUT = 15000; // 15s per model attempt
 
 async function callOpenRouterWithTimeout(
-  apiKey: ***        model: string,
+  apiKey: string        model: string,
   systemPrompt: string,
   userPrompt: string
 ): Promise<string | null> {
