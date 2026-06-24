@@ -143,8 +143,7 @@ const MODELS = [
 const MODEL_TIMEOUT = 15000; // 15s per model attempt
 
 async function callOpenRouterWithTimeout(
-  apiKey: <REDACTED>
-  model: string,
+  apiKey: ***        model: string,
   systemPrompt: string,
   userPrompt: string
 ): Promise<string | null> {
@@ -156,7 +155,7 @@ async function callOpenRouterWithTimeout(
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
+        Authorization: *** ${apiKey}`,
         "HTTP-Referer": process.env.SITE_URL || "https://promptvault.com",
         "X-Title": "PromptVault Generator",
       },
