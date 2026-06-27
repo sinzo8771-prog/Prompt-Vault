@@ -18,12 +18,12 @@ function getRateLimit(ip: string): { allowed: boolean; remaining: number; resetI
   }
 
   if (record.count >= RATE_LIMIT) {
-    const resetIn = record.resetTime - now;
+    const resetIn = Math.max(0, record.resetTime - now);
     return { allowed: false, remaining: 0, resetIn };
   }
 
   record.count++;
-  return { allowed: true, remaining: RATE_LIMIT - record.count, resetIn: record.resetTime - now };
+  return { allowed: true, remaining: RATE_LIMIT - record.count, resetIn: Math.max(0, record.resetTime - now) };
 }
 
 // Cleanup every 5 minutes (lazy — also cleans on each check above)
@@ -45,6 +45,28 @@ interface GenerateRequest {
   description: string;
   tone: string;
   language?: string;
+}
+
+function normalizeIp(ip: string): string {
+  // Prevent unbounded map keys / header injection strings
+  const cleaned = (ip || "").trim().slice(0, 64);
+  return cleaned || "unknown";
+}
+
+function isNonEmptyString(v: unknown): v is string {
+  return typeof v === "string" && v.trim().length > 0;
+}
+
+function isValidTool(tool: unknown): tool is keyof typeof TOOL_GUIDES {
+  return typeof tool === "string" && tool in TOOL_GUIDES;
+}
+
+function isValidTone(tone: unknown): tone is keyof typeof TONE_MAP {
+  return typeof tone === "string" && tone in TONE_MAP;
+}
+
+function isValidCategory(category: unknown): category is keyof typeof CATEGORIES_CONTEXT {
+  return typeof category === "string" && category in CATEGORIES_CONTEXT;
 }
 
 const SYSTEM_PROMPT = `You are an expert AI prompt engineer with 10 years of experience. You create high-quality, effective prompts that deliver exceptional results.
@@ -142,12 +164,16 @@ const MODELS = [
 
 const MODEL_TIMEOUT = 15000; // 15s per model attempt
 
+type ModelAttemptResult =
+  | { ok: true; content: string }
+  | { ok: false; status: number | "timeout"; message: string };
+
 async function callOpenRouterWithTimeout(
   apiKey: string,
   model: string,
   systemPrompt: string,
   userPrompt: string
-): Promise<string | null> {
+): Promise<ModelAttemptResult> {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), MODEL_TIMEOUT);
 
@@ -174,11 +200,30 @@ async function callOpenRouterWithTimeout(
 
     clearTimeout(timeout);
 
-    if (response.status === 429) return null;
-    if (!response.ok) return null;
+    if (response.status === 429) {
+      return { ok: false, status: 429, message: "Rate limited by upstream" };
+    }
+
+    if (!response.ok) {
+      let bodyText = "";
+      try {
+        bodyText = await response.text();
+      } catch {
+        // ignore
+      }
+      const safeSnippet = bodyText ? bodyText.slice(0, 200) : "";
+      console.error("OpenRouter non-OK response", {
+        model,
+        status: response.status,
+        bodySnippet: safeSnippet,
+      });
+
+      return { ok: false, status: response.status, message: "Upstream request failed" };
+    }
 
     const data = await response.json();
-    let content = data.choices?.[0]?.message?.content?.trim() || null;
+    const raw = data?.choices?.[0]?.message?.content;
+    let content = typeof raw === "string" ? raw.trim() : "";
 
     if (content) {
       content = content
@@ -189,45 +234,85 @@ async function callOpenRouterWithTimeout(
         .trim();
     }
 
-    return content;
-  } catch {
+    if (!content) {
+      return { ok: false, status: 502, message: "Upstream returned empty content" };
+    }
+
+    return { ok: true, content };
+  } catch (e) {
     clearTimeout(timeout);
-    return null;
+
+    const isAbort = (e as Error | undefined)?.name === "AbortError";
+    return isAbort
+      ? { ok: false, status: "timeout", message: "Request timed out" }
+      : { ok: false, status: 500, message: "Network/unknown error" };
   }
 }
 
 export async function POST(request: NextRequest) {
   try {
-    const ip = request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip") || "unknown";
+    const rawIp =
+      request.headers.get("x-forwarded-for") ||
+      request.headers.get("x-real-ip") ||
+      "unknown";
+
+    const ip = normalizeIp(rawIp);
 
     const { allowed, remaining, resetIn } = getRateLimit(ip);
     if (!allowed) {
       return NextResponse.json(
         { error: "Rate limit exceeded. Try again in a moment.", resetIn },
-        { status: 429, headers: { "X-RateLimit-Remaining": "0", "X-RateLimit-Reset": String(Math.ceil(resetIn / 1000)) } }
+        {
+          status: 429,
+          headers: {
+            "X-RateLimit-Remaining": "0",
+            "X-RateLimit-Reset": String(Math.ceil(resetIn / 1000)),
+          },
+        }
       );
     }
 
-    const body: GenerateRequest = await request.json();
+    let bodyUnknown: unknown;
+    try {
+      bodyUnknown = await request.json();
+    } catch {
+      return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
+    }
+
+    const body = bodyUnknown as Partial<GenerateRequest>;
     const { tool, category, description, tone, language } = body;
 
-    if (!description?.trim()) {
-      return NextResponse.json({ error: "Description is required" }, { status: 400 });
+    const validationErrors: Record<string, string> = {};
+
+    if (!isValidTool(tool)) validationErrors.tool = `Invalid tool. Allowed: ${Object.keys(TOOL_GUIDES).join(", ")}`;
+    if (!isValidCategory(category)) validationErrors.category = `Invalid category. Allowed: ${Object.keys(CATEGORIES_CONTEXT).join(", ")}`;
+    if (!isValidTone(tone)) validationErrors.tone = `Invalid tone. Allowed: ${Object.keys(TONE_MAP).join(", ")}`;
+    if (!isNonEmptyString(description)) validationErrors.description = "Description is required and must be a non-empty string";
+    if (language !== undefined && (!isNonEmptyString(language) || language === "")) validationErrors.language = "Language must be a non-empty string when provided";
+
+    if (Object.keys(validationErrors).length > 0) {
+      return NextResponse.json({ error: "Invalid request body", validationErrors }, { status: 400 });
     }
+
+    // Narrow types after validation
+    const validatedTool = tool as keyof typeof TOOL_GUIDES;
+    const validatedCategory = category as keyof typeof CATEGORIES_CONTEXT;
+    const validatedTone = tone as keyof typeof TONE_MAP;
+    const validatedDescription = description as string;
 
     const apiKey = process.env.OPENROUTER_API_KEY;
     if (!apiKey) {
       return NextResponse.json({ error: "API key not configured" }, { status: 500 });
     }
 
-    const toolGuide = TOOL_GUIDES[tool] || TOOL_GUIDES.ChatGPT;
-    const toneGuide = TONE_MAP[tone] || TONE_MAP.Professional;
-    const categoryContext = CATEGORIES_CONTEXT[category] || "";
+    const toolGuide = TOOL_GUIDES[validatedTool];
+    const toneGuide = TONE_MAP[validatedTone];
+    const categoryContext = CATEGORIES_CONTEXT[validatedCategory];
     const langNote = language && language !== "English" ? `\nOutput language: ${language}` : "";
 
-    const userPrompt = `TASK: Generate a prompt for ${tool} in the ${category} category.
+    const userPrompt = `TASK: Generate a prompt for ${validatedTool} in the ${validatedCategory} category.
 
-USER DESCRIPTION: ${description}
+USER DESCRIPTION: ${validatedDescription}
 
 TOOL-SPECIFIC FORMAT:
 ${toolGuide}
@@ -242,6 +327,7 @@ Generate ONLY the prompt text (no explanations, no quotes, no markdown):`;
     // Try models: first 3 in parallel, then fallback to remaining
     let generatedPrompt: string | null = null;
     let usedModel = "";
+    let lastModelError: { status: number | "timeout"; message: string } | null = null;
 
     const primaryModels = MODELS.slice(0, 3);
     const fallbackModels = MODELS.slice(3);
@@ -250,8 +336,12 @@ Generate ONLY the prompt text (no explanations, no quotes, no markdown):`;
     const primaryResult = await Promise.any(
       primaryModels.map(async (model) => {
         const result = await callOpenRouterWithTimeout(apiKey, model, SYSTEM_PROMPT, userPrompt);
-        if (!result) throw new Error(`${model} failed`);
-        return { result, model };
+        if (!result.ok) {
+          // keep most recent error for reporting
+          lastModelError = { status: result.status, message: result.message };
+          throw new Error(`${model} failed`);
+        }
+        return { result: result.content, model };
       })
     ).catch(() => null);
 
@@ -261,18 +351,24 @@ Generate ONLY the prompt text (no explanations, no quotes, no markdown):`;
     } else {
       // Fallback: try remaining models sequentially
       for (const model of fallbackModels) {
-        generatedPrompt = await callOpenRouterWithTimeout(apiKey, model, SYSTEM_PROMPT, userPrompt);
-        if (generatedPrompt) {
+        const result = await callOpenRouterWithTimeout(apiKey, model, SYSTEM_PROMPT, userPrompt);
+        if (result.ok) {
+          generatedPrompt = result.content;
           usedModel = model;
           break;
         }
+        lastModelError = { status: result.status, message: result.message };
       }
     }
 
     if (!generatedPrompt) {
       return NextResponse.json(
-        { error: "All models are temporarily busy. Please try again in a few seconds." },
-        { status: 503 }
+        {
+          error: "All models are temporarily unavailable. Please try again in a few seconds.",
+          modelsTried: MODELS,
+          lastError: lastModelError,
+        },
+        { status: 503, headers: { "X-RateLimit-Remaining": String(remaining) } }
       );
     }
 
