@@ -11,6 +11,7 @@ const NAV = [
   { href: "/category/writing", label: "Prompts" },
   { href: "/generator", label: "Generator" },
   { href: "/search", label: "Search" },
+  { href: "/saved", label: "Saved" },
   { href: "/about", label: "About" },
 ];
 

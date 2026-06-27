@@ -285,7 +285,9 @@ export async function POST(request: NextRequest) {
     const validationErrors: Record<string, string> = {};
 
     if (!isValidTool(tool)) validationErrors.tool = `Invalid tool. Allowed: ${Object.keys(TOOL_GUIDES).join(", ")}`;
-    if (!isValidCategory(category)) validationErrors.category = `Invalid category. Allowed: ${Object.keys(CATEGORIES_CONTEXT).join(", ")}`;
+    if (category !== "" && category !== undefined && !isValidCategory(category)) {
+      validationErrors.category = `Invalid category. Allowed: ${Object.keys(CATEGORIES_CONTEXT).join(", ")}`;
+    }
     if (!isValidTone(tone)) validationErrors.tone = `Invalid tone. Allowed: ${Object.keys(TONE_MAP).join(", ")}`;
     if (!isNonEmptyString(description)) validationErrors.description = "Description is required and must be a non-empty string";
     if (language !== undefined && (!isNonEmptyString(language) || language === "")) validationErrors.language = "Language must be a non-empty string when provided";
@@ -296,7 +298,7 @@ export async function POST(request: NextRequest) {
 
     // Narrow types after validation
     const validatedTool = tool as keyof typeof TOOL_GUIDES;
-    const validatedCategory = category as keyof typeof CATEGORIES_CONTEXT;
+    const validatedCategory = (category || "") as keyof typeof CATEGORIES_CONTEXT | "";
     const validatedTone = tone as keyof typeof TONE_MAP;
     const validatedDescription = description as string;
 
@@ -307,19 +309,19 @@ export async function POST(request: NextRequest) {
 
     const toolGuide = TOOL_GUIDES[validatedTool];
     const toneGuide = TONE_MAP[validatedTone];
-    const categoryContext = CATEGORIES_CONTEXT[validatedCategory];
+    const categoryContext = validatedCategory ? CATEGORIES_CONTEXT[validatedCategory] : "";
+    const categoryLine = validatedCategory ? ` in the ${validatedCategory} category` : "";
+    const categoryContextLine = categoryContext ? `\nCATEGORY CONTEXT: ${categoryContext}` : "";
     const langNote = language && language !== "English" ? `\nOutput language: ${language}` : "";
 
-    const userPrompt = `TASK: Generate a prompt for ${validatedTool} in the ${validatedCategory} category.
+    const userPrompt = `TASK: Generate a prompt for ${validatedTool}${categoryLine}.
 
 USER DESCRIPTION: ${validatedDescription}
 
 TOOL-SPECIFIC FORMAT:
 ${toolGuide}
 
-TONE: ${tone} — ${toneGuide}
-
-CATEGORY CONTEXT: ${categoryContext}
+TONE: ${tone} — ${toneGuide}${categoryContextLine}
 ${langNote}
 
 Generate ONLY the prompt text (no explanations, no quotes, no markdown):`;

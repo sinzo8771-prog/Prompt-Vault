@@ -1,15 +1,14 @@
 "use client";
 
-import { useState, useEffect, useMemo, Suspense } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
 import { Search, SlidersHorizontal, X } from "lucide-react";
 import Link from "next/link";
 import type { Prompt } from "@/lib/types";
 import { PromptCard } from "@/components/PromptCard";
 import { ScrollReveal } from "@/components/ScrollReveal";
 import { FilterSidebar } from "@/components/FilterSidebar";
-import { useSearch, EMPTY_FILTERS } from "@/components/useSearch";
+import { useSearch } from "@/components/useSearch";
 
 function SearchContent() {
   const searchParams = useSearchParams();

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback } from "react";
 import Fuse from "fuse.js";
 import type { Prompt, SearchFilters } from "@/lib/types";
 

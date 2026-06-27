@@ -1,6 +1,5 @@
 import {
-  getFeaturedPrompts,
-  getTrendingPrompts,
+  getAllPrompts,
   getCategories,
 } from "@/lib/prompts";
 import { Hero } from "@/components/Hero";
@@ -13,14 +12,14 @@ import { ArrowRight } from "lucide-react";
 export const revalidate = 60;
 
 export default async function HomePage() {
-  const [featured, trending, categories] = await Promise.all([
-    getFeaturedPrompts(6),
-    getTrendingPrompts(6),
+  const [allPrompts, categories] = await Promise.all([
+    getAllPrompts(),
     getCategories(),
   ]);
 
-  // Derive total count from featured (already fetched from same source)
-  const totalPrompts = featured.length >= 6 ? 6 : featured.length;
+  const featured = allPrompts.slice(0, 6);
+  const trending = allPrompts.slice(0, 6);
+  const totalPrompts = allPrompts.length;
 
   return (
     <>
